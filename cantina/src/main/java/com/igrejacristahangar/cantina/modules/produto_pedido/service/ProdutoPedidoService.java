@@ -6,7 +6,9 @@ import com.igrejacristahangar.cantina.modules.produto.repository.ProdutoReposito
 import com.igrejacristahangar.cantina.modules.produto_pedido.dto.ProdutoPedidoRequestDTO;
 import com.igrejacristahangar.cantina.modules.produto_pedido.model.Produto_Pedido;
 import com.igrejacristahangar.cantina.modules.produto_pedido.repository.ProdutoPedidoRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ProdutoPedidoService {
     
     @Autowired

@@ -3,16 +3,16 @@ package com.igrejacristahangar.cantina.modules.pedido.model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.igrejacristahangar.cantina.modules.pedido.enums.FORMA_PAGAMENTO;
 import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS;
 import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS_PAGAMENTO;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Data
@@ -20,23 +20,28 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Pedido {
-    
+
     @Id
     @GeneratedValue
     private UUID id;
 
-    private String cliente_nome;
-    
+    private String clienteNome;
+
     private Double preco;
 
-    private String forma_pagamento;
+    private Integer numeroPedido;
 
-    private Integer numero_pedido;
-
+    @Enumerated(EnumType.STRING)
     private STATUS status;
 
-    private STATUS_PAGAMENTO status_pagamento;
+    @Enumerated(EnumType.STRING)
+    private STATUS_PAGAMENTO statusPagamento;
 
-    private LocalDateTime created_at;
+    @Enumerated(EnumType.STRING)
+    private FORMA_PAGAMENTO formaPagamento;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
 }

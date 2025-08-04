@@ -1,9 +1,9 @@
 package com.igrejacristahangar.cantina.modules.pedido.mapper;
 
-import org.mapstruct.Mapper;
 
 import com.igrejacristahangar.cantina.modules.pedido.dto.PedidoResponseDTO;
 import com.igrejacristahangar.cantina.modules.pedido.model.Pedido;
+import org.mapstruct.Mapper;
 
 // componentModel = "spring" permite injetar com @Autowired
 @Mapper(componentModel = "spring")

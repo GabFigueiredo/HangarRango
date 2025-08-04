@@ -3,7 +3,9 @@ package com.igrejacristahangar.cantina.modules.pedido.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import com.igrejacristahangar.cantina.modules.pedido.dto.StatusRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,10 @@ import com.igrejacristahangar.cantina.modules.produto.model.Produto;
 import com.igrejacristahangar.cantina.modules.produto.service.ProdutoService;
 import com.igrejacristahangar.cantina.modules.produto_pedido.dto.ProdutoPedidoRequestDTO;
 import com.igrejacristahangar.cantina.modules.produto_pedido.service.ProdutoPedidoService;
+import com.igrejacristahangar.cantina.exceptions.ResourceNotFoundException;
+import com.igrejacristahangar.cantina.exceptions.InactiveProductException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 @Service
 public class PedidoService {
@@ -38,9 +44,18 @@ public class PedidoService {
     private PedidoMapper pedidoMapper;
 
     public Page<Pedido> buscarPedidosPorRange(Pageable pageable) {
-        var pedidos = pedidoRepository.findAll(pageable);
 
-        return pedidos;
+        return pedidoRepository.findAll(pageable);
+    }
+
+    /**
+     * Busca um pedido pelo seu ID.
+     * @param id UUID do pedido
+     * @return Pedido
+     */
+    public Pedido buscarPedidoPorID(UUID id) {
+        return pedidoRepository.findById(id).
+                orElseThrow(() -> new ResourceNotFoundException("ID não encontrado", "id"));
     }
 
     /**
@@ -56,29 +71,32 @@ public class PedidoService {
      * </ul>
      *
      * @param requestDTO Objeto contendo os dados do pedido a ser criado, incluindo cliente, forma de pagamento,
-     *                   preço, status do pagamento e IDs dos produtos.
+     *                   preço, status do pagamento e IDs dos produtos e a quantidade deles.
      * @return {@code PedidoResponseDTO} do pedido criado.
-     * @throws RuntimeException caso ocorra algum erro durante a criação do pedido ou associação dos produtos.
+     * @throws ResourceNotFoundException se um dos produtos não for encontrado no sistema.
+     * @throws InactiveProductException se algum produto estiver inativo
+     * @throws MethodArgumentNotValidException se os dados do request estiverem inválidos
      */
     public PedidoResponseDTO criarPedido(PedidoRequestDTO requestDTO) {
         List<Produto> listaDeProdutos = new ArrayList<>();
 
-         // Busca e verifica se todos os produtos estão ativos, adiciona na lista
-        for (DetalhesProdutoDTO detalhesDoProduto : requestDTO.getDetalhesProdutos()) {
-            var produto = produtoService.encontrarProdutoPeloSeuID(detalhesDoProduto.getProdutoId());
-            if (produto.isStatus()) {
+        // Busca, depois verifica se todos os produtos estão ativos, adiciona na lista
+        for (int i = 0; i < requestDTO.getDetalhesProdutos().size(); i++) {
+            UUID produtoID = requestDTO.getDetalhesProdutos().get(i).getProdutoId();
+            Produto produto = produtoService.encontrarProdutoPeloSeuID(produtoID);
+            if (produtoService.verificarStatusDoPedido(produto)) {
                 listaDeProdutos.add(produto);
             }
         }
 
         // Cria o novo pedido no banco
         Pedido novoPedido = Pedido.builder()
-            .cliente_nome(requestDTO.getCliente_nome())
-            .forma_pagamento(requestDTO.getForma_pagamento())
+            .clienteNome(requestDTO.getClienteNome())
+            .formaPagamento(requestDTO.getFormaPagamento())
             .preco(requestDTO.getPreco())
-            .status_pagamento(STATUS_PAGAMENTO.valueOf(requestDTO.getStatus_pagamento()))
-            .status(STATUS.PREPARANDO)  
-            .created_at(LocalDateTime.now())
+            .statusPagamento(requestDTO.getStatusPagamento())
+            .status(STATUS.PREPARANDO)
+            .numeroPedido(this.gerarCodigoDePedido())
             .build();
 
         var pedidoSalvo = pedidoRepository.save(novoPedido);
@@ -97,6 +115,49 @@ public class PedidoService {
             ProdutoPedidoService.criarProdutoPedido(produtoPedido);
         }
 
+        var pedidoMapeado = pedidoMapper.PedidoToPedidoResponseDTO(pedidoSalvo);
+
+        System.out.println("Salvo: " + pedidoSalvo.getClienteNome());
+        System.out.println("Mapeado: " + pedidoMapeado.getClienteNome());
+
         return pedidoMapper.PedidoToPedidoResponseDTO(pedidoSalvo);
     }
+
+
+    /**
+     * Gera um novo codigo incrementando o maior código (MAX 1000).
+     * <p>
+     *
+     * Se o maior código for igual a 1000, o próximo código será 1.
+     * @return O código do pedido
+     */
+    public Integer gerarCodigoDePedido() {
+        Integer ultimoNumero = pedidoRepository.findMaxNumeroPedido();
+        Integer proximoNumero = (ultimoNumero != null) ? ultimoNumero + 1 : 1;
+
+        if (proximoNumero > 1000) {
+            proximoNumero = 1;
+        }
+
+        return proximoNumero;
+    }
+
+    /**
+     * Altera o status de um pedido (PREPARANDO, CONCLUÍDO)
+     * e o status de pagamento (CARTÃO, PIX, DINHEIRO, MARCADO)
+     *
+     * @param pedido
+     * @param requestDTO ID do pedido, novo status de pedido e novo status de pagamento
+     * @return PedidoResponseDTO
+     */
+    public PedidoResponseDTO alterarStatusDePedidoEPagamento(Pedido pedido, StatusRequestDTO requestDTO) {
+        pedido.setStatus(requestDTO.getPedidoStatus());
+        pedido.setStatusPagamento(requestDTO.getStatusPagamento());
+
+        pedidoRepository.save(pedido);
+
+        return pedidoMapper.PedidoToPedidoResponseDTO(pedido);
+    }
+
+
 }

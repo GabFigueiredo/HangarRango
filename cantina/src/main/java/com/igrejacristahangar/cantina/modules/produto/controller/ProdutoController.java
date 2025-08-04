@@ -1,32 +1,61 @@
 package com.igrejacristahangar.cantina.modules.produto.controller;
 
+import com.igrejacristahangar.cantina.modules.produto.dto.StatusProdutoRequestDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.igrejacristahangar.cantina.modules.produto.dto.ProdutoRequestDTO;
 import com.igrejacristahangar.cantina.modules.produto.dto.ProdutoResponseDTO;
 import com.igrejacristahangar.cantina.modules.produto.service.ProdutoService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import jakarta.validation.Valid;
 
 @RestController
-@Controller
 @RequestMapping("/cantina/produto")
+@Tag(name = "Produto", description = "Endpoints relacionados ao produto")
 public class ProdutoController {
     
     @Autowired
     private ProdutoService produtoService;
 
+
+    @Operation(summary = "Cria um produto", method = "POST", description = "Rota responsável por criar um produto")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Criação de produto feita com sucesso.",
+                    content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ProdutoResponseDTO.class)
+            )})
+    })
     @PostMapping
     public ResponseEntity<ProdutoResponseDTO> post(@Valid @RequestBody ProdutoRequestDTO produtoRequest) {
+
         var produto = produtoService.criarProduto(produtoRequest);
 
         return ResponseEntity.ok(produto);
-    } 
+    }
+
+    @Operation(summary = "Altera o status de um produto", method = "PATCH", description = "Rota responsável por alterar um status de um produto")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Alteração de status feita com sucesso.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProdutoResponseDTO.class)
+                    )})
+    })
+    @PatchMapping
+    public ResponseEntity<ProdutoResponseDTO> patch(@Valid @RequestBody StatusProdutoRequestDTO requestDTO) {
+        var produto = produtoService.encontrarProdutoPeloSeuID(requestDTO.getProdutoId());
+
+        var responseDTO = produtoService.alterarStatusDoProduto(produto, requestDTO.isStatus());
+
+        return ResponseEntity.ok(responseDTO);
+
+    }
 
 }
