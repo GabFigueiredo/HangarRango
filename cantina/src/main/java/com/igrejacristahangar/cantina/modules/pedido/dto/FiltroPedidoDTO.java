@@ -14,7 +14,6 @@ public class FiltroPedidoDTO {
     private String nome;
     private LocalDate data;
     private STATUS pedidoStatus;
-    private STATUS status;
     private FORMA_PAGAMENTO formaPagamento;
     private STATUS_PAGAMENTO statusPagamento;
 

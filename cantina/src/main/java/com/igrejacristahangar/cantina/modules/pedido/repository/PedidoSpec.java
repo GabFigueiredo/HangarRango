@@ -82,7 +82,7 @@ public class PedidoSpec {
     public static Specification<Pedido> filtrarPedidoPorTodosOsCampos(FiltroPedidoDTO filtro) {
         return filtrarPorNome(filtro.getNome())
                 .and(filtrarPorDataDeEfetuamento(filtro.getData())
-                        .and(filtrarPorStatusDoPedido(filtro.getStatus()).
+                        .and(filtrarPorStatusDoPedido(filtro.getPedidoStatus()).
                                 and(filtrarPorFormaDePagamento(filtro.getFormaPagamento())
                                         .and(filtrarPorStatusDePagamento(filtro.getStatusPagamento())))));
 }

@@ -77,7 +77,6 @@ public class PedidoController {
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) LocalDate data,
             @RequestParam(required = false) STATUS pedidoStatus,
-            @RequestParam(required = false) STATUS status,
             @RequestParam(required = false) FORMA_PAGAMENTO formaPagamento,
             @RequestParam(required = false) STATUS_PAGAMENTO statusPagamento
     ) {
@@ -85,7 +84,6 @@ public class PedidoController {
                 .nome(nome)
                 .data(data)
                 .pedidoStatus(pedidoStatus)
-                .status(status)
                 .formaPagamento(formaPagamento)
                 .statusPagamento(statusPagamento)
                 .build();
