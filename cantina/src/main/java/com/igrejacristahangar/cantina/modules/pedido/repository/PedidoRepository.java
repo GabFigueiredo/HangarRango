@@ -5,9 +5,10 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.igrejacristahangar.cantina.modules.pedido.model.Pedido;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
-public interface PedidoRepository extends JpaRepository<Pedido, UUID> {
+public interface PedidoRepository extends JpaRepository<Pedido, UUID>, JpaSpecificationExecutor<Pedido> {
     @Query("SELECT MAX(p.numeroPedido) from Pedido p")
     Integer findMaxNumeroPedido();
 }

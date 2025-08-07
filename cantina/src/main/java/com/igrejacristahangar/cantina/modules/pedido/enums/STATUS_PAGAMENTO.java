@@ -2,8 +2,7 @@ package com.igrejacristahangar.cantina.modules.pedido.enums;
 
 public enum STATUS_PAGAMENTO {
     PENDENTE("Pendente"),
-    EFETUADO("Efetuado"),
-    MARCADO("Marcado");
+    EFETUADO("Efetuado");
 
     private final String descricao;
 

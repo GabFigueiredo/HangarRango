@@ -5,17 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.igrejacristahangar.cantina.modules.pedido.dto.StatusRequestDTO;
+import com.igrejacristahangar.cantina.modules.pedido.dto.*;
+import com.igrejacristahangar.cantina.modules.pedido.repository.PedidoSpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.igrejacristahangar.cantina.modules.pedido.dto.DetalhesProdutoDTO;
-import com.igrejacristahangar.cantina.modules.pedido.dto.PedidoRequestDTO;
-import com.igrejacristahangar.cantina.modules.pedido.dto.PedidoResponseDTO;
 import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS;
-import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS_PAGAMENTO;
 import com.igrejacristahangar.cantina.modules.pedido.mapper.PedidoMapper;
 import com.igrejacristahangar.cantina.modules.pedido.model.Pedido;
 import com.igrejacristahangar.cantina.modules.pedido.repository.PedidoRepository;
@@ -26,11 +23,10 @@ import com.igrejacristahangar.cantina.modules.produto_pedido.service.ProdutoPedi
 import com.igrejacristahangar.cantina.exceptions.ResourceNotFoundException;
 import com.igrejacristahangar.cantina.exceptions.InactiveProductException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.PatchMapping;
 
 @Service
 public class PedidoService {
-    
+
     @Autowired
     private PedidoRepository pedidoRepository;
 
@@ -43,6 +39,12 @@ public class PedidoService {
     @Autowired
     private PedidoMapper pedidoMapper;
 
+
+    /**
+     * Busca de pedidos por paginaçãp
+     * @param pageable
+     * @return Page<Pedido>
+     */
     public Page<Pedido> buscarPedidosPorRange(Pageable pageable) {
 
         return pedidoRepository.findAll(pageable);
@@ -91,13 +93,13 @@ public class PedidoService {
 
         // Cria o novo pedido no banco
         Pedido novoPedido = Pedido.builder()
-            .clienteNome(requestDTO.getClienteNome())
-            .formaPagamento(requestDTO.getFormaPagamento())
-            .preco(requestDTO.getPreco())
-            .statusPagamento(requestDTO.getStatusPagamento())
-            .status(STATUS.PREPARANDO)
-            .numeroPedido(this.gerarCodigoDePedido())
-            .build();
+                .clienteNome(requestDTO.getClienteNome())
+                .formaPagamento(requestDTO.getFormaPagamento())
+                .preco(requestDTO.getPreco())
+                .statusPagamento(requestDTO.getStatusPagamento())
+                .status(STATUS.PREPARANDO)
+                .numeroPedido(this.gerarCodigoDePedido())
+                .build();
 
         var pedidoSalvo = pedidoRepository.save(novoPedido);
 
@@ -107,22 +109,18 @@ public class PedidoService {
             Produto produto = listaDeProdutos.get(i);
 
             ProdutoPedidoRequestDTO produtoPedido = ProdutoPedidoRequestDTO.builder()
-                .pedido(pedidoSalvo)
-                .produto(produto)
-                .quantidade(detalhes.getQuantidade())
-                .build();
+                    .pedido(pedidoSalvo)
+                    .produto(produto)
+                    .quantidade(detalhes.getQuantidade())
+                    .build();
 
             ProdutoPedidoService.criarProdutoPedido(produtoPedido);
         }
 
         var pedidoMapeado = pedidoMapper.PedidoToPedidoResponseDTO(pedidoSalvo);
 
-        System.out.println("Salvo: " + pedidoSalvo.getClienteNome());
-        System.out.println("Mapeado: " + pedidoMapeado.getClienteNome());
-
         return pedidoMapper.PedidoToPedidoResponseDTO(pedidoSalvo);
     }
-
 
     /**
      * Gera um novo codigo incrementando o maior código (MAX 1000).
@@ -159,5 +157,15 @@ public class PedidoService {
         return pedidoMapper.PedidoToPedidoResponseDTO(pedido);
     }
 
+    /**
+     * Busca todos os pedidos que batem com o filtro, por paginação.
+     * @param filtro FiltroPedidoDTO
+     * @param pageable Paginação
+     * @return Page<Pedido>
+     */
+    public Page<Pedido> buscarPedidosPorTodosOsFiltros(FiltroPedidoDTO filtro, Pageable pageable) {
+
+        return pedidoRepository.findAll(PedidoSpec.filtrarPedidoPorTodosOsCampos(filtro), pageable);
+    }
 
 }

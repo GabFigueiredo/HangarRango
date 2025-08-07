@@ -21,7 +21,7 @@ import com.igrejacristahangar.cantina.modules.produto.service.ProdutoService;
 @RequestMapping("/cantina/produto")
 @Tag(name = "Produto", description = "Endpoints relacionados ao produto")
 public class ProdutoController {
-    
+
     @Autowired
     private ProdutoService produtoService;
 
@@ -30,8 +30,8 @@ public class ProdutoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Criação de produto feita com sucesso.",
                     content = { @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ProdutoResponseDTO.class)
-            )})
+                            schema = @Schema(implementation = ProdutoResponseDTO.class)
+                    )})
     })
     @PostMapping
     public ResponseEntity<ProdutoResponseDTO> post(@Valid @RequestBody ProdutoRequestDTO produtoRequest) {

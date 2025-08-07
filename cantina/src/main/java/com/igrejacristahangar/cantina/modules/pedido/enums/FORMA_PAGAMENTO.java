@@ -3,6 +3,7 @@ package com.igrejacristahangar.cantina.modules.pedido.enums;
 public enum FORMA_PAGAMENTO {
     PIX("Pix"),
     CARTAO("Cartão"),
+    DINHEIRO("Dinheiro"),
     MARCADO("Marcado");
 
     private final String descricao;

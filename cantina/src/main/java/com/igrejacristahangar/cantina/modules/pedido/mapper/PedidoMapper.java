@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 // componentModel = "spring" permite injetar com @Autowired
 @Mapper(componentModel = "spring")
 public interface PedidoMapper {
-    
+
     PedidoResponseDTO PedidoToPedidoResponseDTO(Pedido pedido);
 
 }
