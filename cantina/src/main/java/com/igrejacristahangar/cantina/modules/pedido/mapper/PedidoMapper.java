@@ -5,10 +5,12 @@ import com.igrejacristahangar.cantina.modules.pedido.dto.PedidoResponseDTO;
 import com.igrejacristahangar.cantina.modules.pedido.model.Pedido;
 import org.mapstruct.Mapper;
 
-// componentModel = "spring" permite injetar com @Autowired
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface PedidoMapper {
 
     PedidoResponseDTO PedidoToPedidoResponseDTO(Pedido pedido);
 
+    List<PedidoResponseDTO> PedidoListToPedidoResponseDTOList(List<Pedido> pedidos);
 }

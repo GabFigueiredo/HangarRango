@@ -40,7 +40,6 @@ public class PedidoService {
     @Autowired
     private PedidoMapper pedidoMapper;
 
-
     /**
      * Busca de pedidos por paginaçãp
      * @param pageable
@@ -49,6 +48,10 @@ public class PedidoService {
     public Page<Pedido> buscarPedidosPorRange(Pageable pageable) {
 
         return pedidoRepository.findAll(pageable);
+    }
+
+    public List<PedidoResponseDTO> buscarTodosOsPedidos() {
+        return pedidoMapper.PedidoListToPedidoResponseDTOList(pedidoRepository.findAll());
     }
 
     /**
@@ -196,5 +199,7 @@ public class PedidoService {
 
         return response;
     }
+
+
 
 }

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @RestController
@@ -45,7 +46,7 @@ public class PedidoController {
                             schema = @Schema(implementation = PedidoResponseDTO.class)
                     )})
     })
-    @GetMapping("/pedido")
+    @GetMapping("/pedidos-paginados")
     public ResponseEntity<PagedModel<EntityModel<Pedido>>> get(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, PagedResourcesAssembler<Pedido> assembler) {
 
         Pageable pageable = PageRequest.of(page, size);
@@ -57,6 +58,18 @@ public class PedidoController {
                 ));
 
         return ResponseEntity.ok(model);
+    }
+
+    @Operation(summary = "Busca todos os pedidos no banco de dados", method = "GET", description = "Rota responsável por buscar todos os pedidos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca de Pedidos feita com sucesso!",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PedidoResponseDTO.class)
+                    )})
+    })
+    @GetMapping("/pedidos")
+    public ResponseEntity<List<PedidoResponseDTO>> getAllOrders() {
+        return ResponseEntity.ok(pedidoService.buscarTodosOsPedidos());
     }
 
     @Operation(summary = "Busca pedidos filtrados por paginação", method = "GET", description = "Rota responsável pela busca de pedidos filtrados por paginação")
