@@ -1,5 +1,6 @@
 package com.igrejacristahangar.cantina.modules.pedido.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -166,6 +167,34 @@ public class PedidoService {
     public Page<Pedido> buscarPedidosPorTodosOsFiltros(FiltroPedidoDTO filtro, Pageable pageable) {
 
         return pedidoRepository.findAll(PedidoSpec.filtrarPedidoPorTodosOsCampos(filtro), pageable);
+    }
+
+    /**
+     * Calcula o Resumo de vendas: Total vendido e Total vendido HOJE
+     *
+     * @return PedidoResumo contém totalPreco, totalPrecoDeHoje
+     */
+    public PedidoResumo gerarResumoDeVendas() {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = startOfDay.plusDays(1);
+
+        Double totalPreco =  pedidoRepository.CountSuccesfullTotalOrdersPrice();
+        Double totalPrecoDeHoje = pedidoRepository.CountTodaySuccesfullTotalOrdersPrice(startOfDay, endOfDay);
+
+        if (totalPreco == null) {
+            totalPreco = 0.0;
+        }
+
+        if (totalPrecoDeHoje == null) {
+            totalPrecoDeHoje = 0.0;
+        }
+
+        PedidoResumo response = PedidoResumo.builder()
+                .totalPreco(totalPreco)
+                .totalPrecoDeHoje(totalPrecoDeHoje)
+                .build();
+
+        return response;
     }
 
 }

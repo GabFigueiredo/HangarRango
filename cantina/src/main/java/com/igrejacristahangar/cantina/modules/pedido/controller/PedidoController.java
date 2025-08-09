@@ -1,9 +1,6 @@
 package com.igrejacristahangar.cantina.modules.pedido.controller;
 
-import com.igrejacristahangar.cantina.modules.pedido.dto.FiltroPedidoDTO;
-import com.igrejacristahangar.cantina.modules.pedido.dto.PedidoRequestDTO;
-import com.igrejacristahangar.cantina.modules.pedido.dto.PedidoResponseDTO;
-import com.igrejacristahangar.cantina.modules.pedido.dto.StatusRequestDTO;
+import com.igrejacristahangar.cantina.modules.pedido.dto.*;
 import com.igrejacristahangar.cantina.modules.pedido.enums.FORMA_PAGAMENTO;
 import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS;
 import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS_PAGAMENTO;
@@ -97,6 +94,18 @@ public class PedidoController {
                 ));
 
         return ResponseEntity.ok(model);
+    }
+
+    @Operation(summary = "Busca o resumo de vendas", method = "GET", description = "Rota responsável pela busca do resumo de vendas: Total vendido e total vendido hoje")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca o resumo de vendas feita com sucesso!",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PedidoResumo.class)
+                    )})
+    })
+    @GetMapping("/pedido/resumo")
+    public ResponseEntity<PedidoResumo> getSumary() {
+        return ResponseEntity.ok(pedidoService.gerarResumoDeVendas());
     }
 
     @Operation(summary = "Criar pedido", method = "POST", description = "Rota responsável pela criação de um pedido")
