@@ -24,35 +24,43 @@ function formatDate(date: Date | undefined) {
   })
 }
 
-function isValidDate(date: Date | undefined) {
-  if (!date) {
-    return false
-  }
-  return !isNaN(date.getTime())
+interface DatePickerProps {
+  value?: Date
+  onChange?: (date: Date | undefined) => void
 }
 
-export function DatePicker() {
+function isValidDate(d: Date) {
+  return d instanceof Date && !isNaN(d.getTime());
+}
+
+export function DatePicker({ value, onChange }: DatePickerProps) {
   const [open, setOpen] = React.useState(false)
-  const [date, setDate] = React.useState<Date | undefined>(
-    new Date("01-02-2024")
-  )
-  const [month, setMonth] = React.useState<Date | undefined>(date)
-  const [value, setValue] = React.useState(formatDate(date))
+  const [month, setMonth] = React.useState<Date | undefined>(value)
+  const [inputValue, setInputValue] = React.useState(
+    value ? value.toLocaleDateString("pt-BR") : ""
+  );
+
+  React.useEffect(() => {
+    setInputValue(value ? value.toLocaleDateString("pt-BR") : "");
+  }, [value]);
+
+  React.useEffect(() => { console.log(value) }, [value])
 
   return (
     <div className="flex flex-col gap-3 w-full">
       <div className="relative flex gap-2">
         <Input
           id="date"
-          value={value}
-          placeholder="May 01, 2025"
+          value={inputValue}
+          placeholder="dd/mm/aaaa"
           className="bg-background pr-10"
           onChange={(e) => {
-            const date = new Date(e.target.value)
-            setValue(e.target.value)
+            setInputValue(e.target.value);
+            const date = new Date(e.target.value);
             if (isValidDate(date)) {
-              setDate(date)
-              setMonth(date)
+              onChange?.(date);
+            } else {
+              onChange?.(undefined);
             }
           }}
           onKeyDown={(e) => {
@@ -81,13 +89,14 @@ export function DatePicker() {
           >
             <Calendar
               mode="single"
-              selected={date}
+              selected={value}
               captionLayout="dropdown"
               month={month}
               onMonthChange={setMonth}
               onSelect={(date) => {
-                setDate(date)
-                setValue(formatDate(date))
+                if (!date) return
+                onChange?.(date)
+                setInputValue(formatDate(date))
                 setOpen(false)
               }}
             />

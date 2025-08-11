@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/sidebar"
 
 
-export default function Page() {
+export default function DashboardPage() {
   return (
     <SidebarProvider
       style={
