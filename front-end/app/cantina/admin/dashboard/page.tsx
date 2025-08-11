@@ -1,7 +1,8 @@
-import DashboardPage from "@/template/dashboard"
+"use client";
 
-export default function Page() {
-  return (
-    <DashboardPage />
-  )
+import DashboardPage from "@/template/dashboard";
+
+export default function HomePage() {
+
+  return <DashboardPage />
 }

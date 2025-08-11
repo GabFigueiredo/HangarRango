@@ -5,7 +5,7 @@ import { Badge } from "../../ui/badge";
 import { Label } from "../../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 import { format } from "date-fns";
-export const columns: ColumnDef<PedidoResponse>[] = [
+export const OrderColumns: ColumnDef<PedidoResponse>[] = [
   {
     accessorKey: "clienteNome",
     header: "Nome do cliente",
