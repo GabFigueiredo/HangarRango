@@ -1,6 +1,7 @@
 package com.igrejacristahangar.cantina.modules.pedido.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,4 +23,5 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID>, JpaSpecif
             "AND p.createdAt >= :startOfDay AND p.createdAt < :endOfDay")
     Double CountTodaySuccesfullTotalOrdersPrice(@Param("startOfDay") LocalDateTime startOfDay,
                                            @Param("endOfDay") LocalDateTime endOfDay);
+
 }

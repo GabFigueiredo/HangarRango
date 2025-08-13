@@ -1,5 +1,6 @@
 package com.igrejacristahangar.cantina.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -10,6 +11,9 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -17,8 +21,8 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // todos os endpoints
-                        .allowedOrigins("http://localhost:3000") // frontend React
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedOrigins(frontendUrl) // frontend React
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                         .allowedHeaders("*")
                         .allowCredentials(true); // se for necessário cookies/autenticação
             }

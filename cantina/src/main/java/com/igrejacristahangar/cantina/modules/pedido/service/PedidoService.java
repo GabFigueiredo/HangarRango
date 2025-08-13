@@ -11,6 +11,7 @@ import com.igrejacristahangar.cantina.modules.pedido.repository.PedidoSpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS;
@@ -40,8 +41,11 @@ public class PedidoService {
     @Autowired
     private PedidoMapper pedidoMapper;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     /**
-     * Busca de pedidos por paginaçãp
+     * Busca de pedidos por paginação.
      * @param pageable
      * @return Page<Pedido>
      */
@@ -50,6 +54,11 @@ public class PedidoService {
         return pedidoRepository.findAll(pageable);
     }
 
+    /**
+     * Busca todos os pedidos.
+     *
+     * @return List<PedidoResponseDTO> com PedidoResponseDTO
+     */
     public List<PedidoResponseDTO> buscarTodosOsPedidos() {
         return pedidoMapper.PedidoListToPedidoResponseDTOList(pedidoRepository.findAll());
     }
@@ -93,6 +102,7 @@ public class PedidoService {
             if (produtoService.verificarStatusDoPedido(produto)) {
                 listaDeProdutos.add(produto);
             }
+
         }
 
         // Cria o novo pedido no banco
@@ -108,9 +118,21 @@ public class PedidoService {
         var pedidoSalvo = pedidoRepository.save(novoPedido);
 
         // Criação dos ProdutoPedido com base na lista validada
+        PreparacaoResponseDTO preparacaoResponseDTO = PreparacaoResponseDTO.builder()
+                .id(pedidoSalvo.getId())
+                .numeroPedido(pedidoSalvo.getNumeroPedido())
+                .build();
+
         for (int i = 0; i < requestDTO.getDetalhesProdutos().size(); i++) {
             DetalhesProdutoDTO detalhes = requestDTO.getDetalhesProdutos().get(i);
             Produto produto = listaDeProdutos.get(i);
+
+            ProdutoPreparacaoDTO produtoPreparacaoDTO = ProdutoPreparacaoDTO.builder()
+                    .nome(produto.getNome())
+                    .quantidade(detalhes.getQuantidade())
+                    .build();
+
+            preparacaoResponseDTO.adicionarNaLista(produtoPreparacaoDTO);
 
             ProdutoPedidoRequestDTO produtoPedido = ProdutoPedidoRequestDTO.builder()
                     .pedido(pedidoSalvo)
@@ -120,6 +142,9 @@ public class PedidoService {
 
             ProdutoPedidoService.criarProdutoPedido(produtoPedido);
         }
+
+        // Envia mensagem SOCKET
+        messagingTemplate.convertAndSend("/cantina/preparacao", preparacaoResponseDTO);
 
         var pedidoMapeado = pedidoMapper.PedidoToPedidoResponseDTO(pedidoSalvo);
 
@@ -152,12 +177,17 @@ public class PedidoService {
      * @param requestDTO ID do pedido, novo status de pedido e novo status de pagamento
      * @return PedidoResponseDTO
      */
-    public PedidoResponseDTO alterarStatusDePedidoEPagamento(Pedido pedido, StatusRequestDTO requestDTO) {
-        pedido.setStatus(requestDTO.getPedidoStatus());
+    public PedidoResponseDTO alterarStatusDePagamento(Pedido pedido, StatusRequestDTO requestDTO) {
         pedido.setStatusPagamento(requestDTO.getStatusPagamento());
 
         pedidoRepository.save(pedido);
 
+        return pedidoMapper.PedidoToPedidoResponseDTO(pedido);
+    }
+
+    public PedidoResponseDTO alterarStatusDePedido(Pedido pedido, StatusRequestDTO requestDTO) {
+        pedido.setStatus(requestDTO.getPedidoStatus());
+        pedidoRepository.save(pedido);
         return pedidoMapper.PedidoToPedidoResponseDTO(pedido);
     }
 

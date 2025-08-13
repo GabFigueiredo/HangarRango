@@ -4,6 +4,7 @@ import com.igrejacristahangar.cantina.modules.pedido.dto.*;
 import com.igrejacristahangar.cantina.modules.pedido.enums.FORMA_PAGAMENTO;
 import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS;
 import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS_PAGAMENTO;
+import com.igrejacristahangar.cantina.modules.produto_pedido.service.ProdutoPedidoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,9 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/cantina")
@@ -38,6 +37,9 @@ public class PedidoController {
 
     @Autowired
     private PedidoService pedidoService;
+
+    @Autowired
+    private ProdutoPedidoService produtoPedidoService;
 
     @Operation(summary = "Busca pedidos por paginação", method = "GET", description = "Rota responsável pela busca de pedidos por paginação")
     @ApiResponses(value = {
@@ -58,6 +60,11 @@ public class PedidoController {
                 ));
 
         return ResponseEntity.ok(model);
+    }
+
+    @GetMapping("/pedidos-pendentes")
+    public ResponseEntity<List<PreparacaoResponseDTO>> getAllPreparingOrders() {
+        return ResponseEntity.ok(produtoPedidoService.buscarPedidosPreparandoComProdutos());
     }
 
     @Operation(summary = "Busca todos os pedidos no banco de dados", method = "GET", description = "Rota responsável por buscar todos os pedidos")
@@ -136,7 +143,7 @@ public class PedidoController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @Operation(summary = "Altera o status de pedido, e o status de pagamento", method = "PATCH", description = "Rota responsável pela alteração de status de pedido")
+    @Operation(summary = "Altera o status do pedido", method = "PATCH", description = "Rota responsável pela alteração de status de pedido")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Alteração de status de pedido feita com sucesso!",
                     content = {@Content(mediaType = "application/json",
@@ -144,13 +151,14 @@ public class PedidoController {
                     )})
     })
     @PatchMapping("/pedido")
-    public ResponseEntity<PedidoResponseDTO> patch(@Valid StatusRequestDTO requestDTO) {
+    public ResponseEntity<PedidoResponseDTO> patch(@Valid @RequestBody StatusRequestDTO requestDTO) {
 
         Pedido pedido = pedidoService.buscarPedidoPorID(requestDTO.getClientId());
 
-        PedidoResponseDTO responseDTO = pedidoService.alterarStatusDePedidoEPagamento(pedido, requestDTO);
+        PedidoResponseDTO responseDTO = pedidoService.alterarStatusDePedido(pedido, requestDTO);
 
         return ResponseEntity.ok(responseDTO);
     }
+
 
 }
