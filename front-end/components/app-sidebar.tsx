@@ -39,7 +39,7 @@ const data = {
     },
     {
       title: "Área de preparação",
-      url: "/cantina/admin/area-de-preparacao",
+      url: "/cantina/admin/preparacao",
       icon: IconListDetails,
     },
     {

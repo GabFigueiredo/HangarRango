@@ -8,9 +8,20 @@ export interface PedidoResponse {
   preco: number;
   statusPagamento: StatusPagamento;
   formaPagamento: FormaPagamento;
-  numeroPedido: number;
   createdAt: string;
   status: PedidoStatus;
+  cod: number;
+}
+
+export interface produtoPreparacao {
+  nome: string;
+  quantidade: number;
+}
+
+export interface PreparacaoResponse {
+  id: string;
+  numeroPedido: number;
+  listaProdutos: produtoPreparacao[];
 }
 
 export interface PedidoPage {

@@ -20,12 +20,12 @@ export default function DashboardPage() {
     return (
         <>
         <AppSidebar variant="inset" />
-        <SidebarInset>
-            <SiteHeader />
+        <SidebarInset className="h-full">
+            <SiteHeader name="Financeiro" />
             <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
                 <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                <SectionCards />
+                    <SectionCards />
                 </div>
                 <div className="px-4 lg:px-6">
                     <DataTable columns={OrderColumns} data={data ?? []} FilterFields={OrderFilterFields} />

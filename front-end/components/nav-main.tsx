@@ -55,6 +55,3 @@ export function NavMain({ items, }: {
     </SidebarGroup>
   )
 }
-
-// NORMAL: bg-primary/90 text-primary-foreground
-// ACTIVE: active:bg-primary active:text-primary-foreground
