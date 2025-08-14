@@ -1,16 +1,23 @@
 import { FormaPagamento } from "@/enums/order/formaPagamento.enum";
 import { PedidoStatus } from "@/enums/order/pedidoStatus.enum";
 import { StatusPagamento } from "@/enums/order/statusPagamento.enum";
+import { ProdutoPedidoType } from "../ProdutoPedido";
 
 export interface PedidoResponse {
   id: string;
   clienteNome: string;
   preco: number;
+  status: PedidoStatus;
   statusPagamento: StatusPagamento;
   formaPagamento: FormaPagamento;
+  numeroPedido: number;
   createdAt: string;
-  status: PedidoStatus;
-  cod: number;
+  itens: ProdutoPedidoType[];
+}
+
+export interface PedidoResumo {
+  totalPreco: number;
+  totalPrecoDeHoje: number;
 }
 
 export interface produtoPreparacao {
