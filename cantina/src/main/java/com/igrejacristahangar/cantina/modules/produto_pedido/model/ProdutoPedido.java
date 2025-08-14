@@ -1,5 +1,6 @@
 package com.igrejacristahangar.cantina.modules.produto_pedido.model;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import com.igrejacristahangar.cantina.modules.pedido.model.Pedido;
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Produto_Pedido {
+public class ProdutoPedido {
     @Id
     @GeneratedValue
     private UUID id;
@@ -32,6 +33,6 @@ public class Produto_Pedido {
 
     private Integer quantidade;
 
-    private Double preco;
+    private BigDecimal preco;
     
 }

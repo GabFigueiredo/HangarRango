@@ -1,13 +1,15 @@
 package com.igrejacristahangar.cantina.modules.pedido.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import com.igrejacristahangar.cantina.modules.pedido.dto.*;
 import com.igrejacristahangar.cantina.modules.pedido.repository.PedidoSpec;
+import com.igrejacristahangar.cantina.modules.produto.repository.ProdutoRepository;
+import com.igrejacristahangar.cantina.modules.produto_pedido.model.ProdutoPedido;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,12 +22,9 @@ import com.igrejacristahangar.cantina.modules.pedido.model.Pedido;
 import com.igrejacristahangar.cantina.modules.pedido.repository.PedidoRepository;
 import com.igrejacristahangar.cantina.modules.produto.model.Produto;
 import com.igrejacristahangar.cantina.modules.produto.service.ProdutoService;
-import com.igrejacristahangar.cantina.modules.produto_pedido.dto.ProdutoPedidoRequestDTO;
 import com.igrejacristahangar.cantina.modules.produto_pedido.service.ProdutoPedidoService;
 import com.igrejacristahangar.cantina.exceptions.ResourceNotFoundException;
 import com.igrejacristahangar.cantina.exceptions.InactiveProductException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-
 @Service
 public class PedidoService {
 
@@ -33,10 +32,13 @@ public class PedidoService {
     private PedidoRepository pedidoRepository;
 
     @Autowired
+    private ProdutoRepository produtoRepository;
+
+    @Autowired
     private ProdutoService produtoService;
 
     @Autowired
-    private ProdutoPedidoService ProdutoPedidoService;
+    private ProdutoPedidoService produtoPedidoService;
 
     @Autowired
     private PedidoMapper pedidoMapper;
@@ -63,6 +65,10 @@ public class PedidoService {
         return pedidoMapper.PedidoListToPedidoResponseDTOList(pedidoRepository.findAll());
     }
 
+    public List<PedidoResponseDTO> buscarTodosPedidosPreparando() {
+        return pedidoMapper.PedidoListToPedidoResponseDTOList(pedidoRepository.findAllByStatus(STATUS.PREPARANDO));
+    }
+
     /**
      * Busca um pedido pelo seu ID.
      * @param id UUID do pedido
@@ -74,81 +80,63 @@ public class PedidoService {
     }
 
     /**
-     * Cria um novo pedido com base nos dados recebidos.
-     * <p>
-     * Esta função realiza as seguintes etapas:
-     * <ul>
-     *   <li>Verifica se os produtos desse pedido estão ativos e os coloca em uma lista.</li>
-     *   <li>Constrói um novo objeto {@code Pedido} a partir dos dados do {@code PedidoRequestDTO}.</li>
-     *   <li>Salva o pedido no banco de dados.</li>
-     *   <li>Cria a associação entre o pedido e seus produtos através da {@code ProdutoPedidoService}.</li>
-     *   <li>Retorna o {@code PedidoResponseDTO} correspondente ao pedido salvo.</li>
-     * </ul>
+     * Cria um novo pedido na cantina com os produtos informados no PedidoRequestDTO.
      *
-     * @param requestDTO Objeto contendo os dados do pedido a ser criado, incluindo cliente, forma de pagamento,
-     *                   preço, status do pagamento e IDs dos produtos e a quantidade deles.
-     * @return {@code PedidoResponseDTO} do pedido criado.
-     * @throws ResourceNotFoundException se um dos produtos não for encontrado no sistema.
-     * @throws InactiveProductException se algum produto estiver inativo
-     * @throws MethodArgumentNotValidException se os dados do request estiverem inválidos
+     * <p>O método realiza os seguintes passos:</p>
+     * <ol>
+     *     <li>Busca todos os produtos ativos correspondentes aos IDs informados no pedido.</li>
+     *     <li>Cria um objeto Pedido com os dados do cliente, forma de pagamento, status,
+     *         e número do pedido.</li>
+     *     <li>Chama a função criarItensDoPedido para gerar a lista de itens
+     *         (ProdutoPedido) associando cada produto à quantidade e preço correto.</li>
+     *     <li>Associa os itens ao pedido e salva tudo no banco em uma única operação
+     *         (graças ao {@code CascadeType.ALL}).</li>
+     *     <li>Converte o pedido salvo para {@link PedidoResponseDTO}.</li>
+     *     <li>Envia uma notificação via WebSocket para o endpoint "/cantina/preparacao".</li>
+     * </ol>
+     *
+     * @param requestDTO DTO contendo os dados do pedido, incluindo nome do cliente,
+     *                   forma de pagamento, status do pagamento e lista de produtos.
+     * @return PedidoResponseDTO contendo os dados do pedido recém-criado.
+     * @throws InactiveProductException se algum produto informado estiver inativo.
      */
     public PedidoResponseDTO criarPedido(PedidoRequestDTO requestDTO) {
-        List<Produto> listaDeProdutos = new ArrayList<>();
+        // Buscar produtos ativos
+        List<Produto> listaProdutos = produtoService.buscarProdutosAtivos(requestDTO);
 
-        // Busca, depois verifica se todos os produtos estão ativos, adiciona na lista
-        for (int i = 0; i < requestDTO.getDetalhesProdutos().size(); i++) {
-            UUID produtoID = requestDTO.getDetalhesProdutos().get(i).getProdutoId();
-            Produto produto = produtoService.encontrarProdutoPeloSeuID(produtoID);
-            if (produtoService.verificarStatusDoPedido(produto)) {
-                listaDeProdutos.add(produto);
-            }
-
-        }
-
-        // Cria o novo pedido no banco
+        // Criar o pedido (ainda sem itens)
         Pedido novoPedido = Pedido.builder()
                 .clienteNome(requestDTO.getClienteNome())
-                .formaPagamento(requestDTO.getFormaPagamento())
                 .preco(requestDTO.getPreco())
+                .formaPagamento(requestDTO.getFormaPagamento())
                 .statusPagamento(requestDTO.getStatusPagamento())
                 .status(STATUS.PREPARANDO)
                 .numeroPedido(this.gerarCodigoDePedido())
                 .build();
 
-        var pedidoSalvo = pedidoRepository.save(novoPedido);
+        // Criar itens do pedido e atualizar estoque
+        List<ProdutoPedido> itensPedido = produtoPedidoService.criarItensDoPedido(
+                listaProdutos,
+                requestDTO.getDetalhesProdutos(),
+                novoPedido
+        );
 
-        // Criação dos ProdutoPedido com base na lista validada
-        PreparacaoResponseDTO preparacaoResponseDTO = PreparacaoResponseDTO.builder()
-                .id(pedidoSalvo.getId())
-                .numeroPedido(pedidoSalvo.getNumeroPedido())
-                .build();
+        // Associa os itens ao pedido
+        novoPedido.setItens(itensPedido);
 
-        for (int i = 0; i < requestDTO.getDetalhesProdutos().size(); i++) {
-            DetalhesProdutoDTO detalhes = requestDTO.getDetalhesProdutos().get(i);
-            Produto produto = listaDeProdutos.get(i);
+        // Salva os produtos atualizados (quantidade) de uma vez
+        produtoRepository.saveAll(listaProdutos);
 
-            ProdutoPreparacaoDTO produtoPreparacaoDTO = ProdutoPreparacaoDTO.builder()
-                    .nome(produto.getNome())
-                    .quantidade(detalhes.getQuantidade())
-                    .build();
+        // Salva o pedido junto com os itens (cascade)
+        Pedido pedidoSalvo = pedidoRepository.save(novoPedido);
 
-            preparacaoResponseDTO.adicionarNaLista(produtoPreparacaoDTO);
+        // Mapeia para DTO de resposta
+        PedidoResponseDTO pedidoMapeado = pedidoMapper.PedidoToPedidoResponseDTO(pedidoSalvo);
 
-            ProdutoPedidoRequestDTO produtoPedido = ProdutoPedidoRequestDTO.builder()
-                    .pedido(pedidoSalvo)
-                    .produto(produto)
-                    .quantidade(detalhes.getQuantidade())
-                    .build();
+        // Envia notificação via WebSocket
+        messagingTemplate.convertAndSend("/cantina/preparacao", pedidoMapeado);
 
-            ProdutoPedidoService.criarProdutoPedido(produtoPedido);
-        }
-
-        // Envia mensagem SOCKET
-        messagingTemplate.convertAndSend("/cantina/preparacao", preparacaoResponseDTO);
-
-        var pedidoMapeado = pedidoMapper.PedidoToPedidoResponseDTO(pedidoSalvo);
-
-        return pedidoMapper.PedidoToPedidoResponseDTO(pedidoSalvo);
+        return pedidoMapeado;
     }
 
     /**
@@ -211,23 +199,21 @@ public class PedidoService {
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
         LocalDateTime endOfDay = startOfDay.plusDays(1);
 
-        Double totalPreco =  pedidoRepository.CountSuccesfullTotalOrdersPrice();
-        Double totalPrecoDeHoje = pedidoRepository.CountTodaySuccesfullTotalOrdersPrice(startOfDay, endOfDay);
+        BigDecimal totalPreco =  pedidoRepository.CountSuccesfullTotalOrdersPrice();
+        BigDecimal totalPrecoDeHoje = pedidoRepository.CountTodaySuccesfullTotalOrdersPrice(startOfDay, endOfDay);
 
         if (totalPreco == null) {
-            totalPreco = 0.0;
+            totalPreco = BigDecimal.ZERO;
         }
 
         if (totalPrecoDeHoje == null) {
-            totalPrecoDeHoje = 0.0;
+            totalPrecoDeHoje = BigDecimal.ZERO;
         }
 
-        PedidoResumo response = PedidoResumo.builder()
+        return PedidoResumo.builder()
                 .totalPreco(totalPreco)
                 .totalPrecoDeHoje(totalPrecoDeHoje)
                 .build();
-
-        return response;
     }
 
 

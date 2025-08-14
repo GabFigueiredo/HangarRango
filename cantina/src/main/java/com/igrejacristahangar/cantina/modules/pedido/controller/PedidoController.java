@@ -38,8 +38,6 @@ public class PedidoController {
     @Autowired
     private PedidoService pedidoService;
 
-    @Autowired
-    private ProdutoPedidoService produtoPedidoService;
 
     @Operation(summary = "Busca pedidos por paginação", method = "GET", description = "Rota responsável pela busca de pedidos por paginação")
     @ApiResponses(value = {
@@ -63,8 +61,8 @@ public class PedidoController {
     }
 
     @GetMapping("/pedidos-pendentes")
-    public ResponseEntity<List<PreparacaoResponseDTO>> getAllPreparingOrders() {
-        return ResponseEntity.ok(produtoPedidoService.buscarPedidosPreparandoComProdutos());
+    public ResponseEntity<List<PedidoResponseDTO>> getAllPreparingOrders() {
+        return ResponseEntity.ok(pedidoService.buscarTodosPedidosPreparando());
     }
 
     @Operation(summary = "Busca todos os pedidos no banco de dados", method = "GET", description = "Rota responsável por buscar todos os pedidos")

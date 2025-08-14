@@ -1,5 +1,6 @@
 package com.igrejacristahangar.cantina.modules.pedido.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.igrejacristahangar.cantina.modules.pedido.enums.FORMA_PAGAMENTO;
@@ -15,7 +16,7 @@ public class PedidoRequestDTO {
     private String clienteNome;
 
     @NotNull(message = "O preço é obrigatório")
-    private Double preco;
+    private BigDecimal preco;
 
     @NotNull(message = "A forma de pagamento é obrigatória")
     private FORMA_PAGAMENTO formaPagamento;
