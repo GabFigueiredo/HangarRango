@@ -38,7 +38,6 @@ export default function StageOrder({ Pedido }: StageOrderProps) {
     }
 
     if (isSuccess) {
-        queryClient
         toast.success("Pedido concluído com sucesso!")
     }
 

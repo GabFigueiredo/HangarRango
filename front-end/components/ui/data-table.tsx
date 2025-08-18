@@ -1,3 +1,5 @@
+'use client'
+
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -16,8 +18,6 @@ import {
   TableHeader,
   TableRow,
 } from "./table";
-import { Button } from "./button";
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import React, { useState } from "react";
 import { DataTablePagination } from "./data-table-pagination";
 
