@@ -37,6 +37,10 @@ public class ProdutoService {
             .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado." + requestId, "id"));
     }
 
+    public List<ProdutoResponseDTO> buscarTodosProdutos() {
+        return produtoMapper.ProductListToResponseList(produtoRepository.findAll());
+    }
+
     /**
      * Busca, verifica se o status do produto está ativo, retorna o Produto
      *
@@ -47,7 +51,7 @@ public class ProdutoService {
      */
     public boolean verificarStatusDoPedido(Produto produto) {
 
-        if (produto.isStatus()) {
+        if (Boolean.TRUE.equals(produto.getStatus())) {
             return true;
         }
 
@@ -60,15 +64,18 @@ public class ProdutoService {
      * @param produtoRequest
      * @return ProdutoResponseDTO
      */
-    public ProdutoResponseDTO criarProduto(ProdutoRequestDTO produtoRequest) { 
+    public ProdutoResponseDTO criarProduto(ProdutoRequestDTO produtoRequest) {
         Produto novoProduto = Produto.builder()
             .nome(produtoRequest.getNome())
             .preco(produtoRequest.getPreco())
-            .status(false)
             .descricao(produtoRequest.getDescricao())
-        .build();
+                .quantidade(produtoRequest.getQuantidade())
+                .status(Boolean.TRUE.equals(produtoRequest.getStatus()))
+            .build();
 
         var produtoSalvo = produtoRepository.save(novoProduto);
+
+        System.out.println(produtoSalvo.getStatus()); // retorna true
 
         return produtoMapper.ProductToResponse(produtoSalvo);
     }
@@ -115,7 +122,7 @@ public class ProdutoService {
 
         // Verifica se todos os produtos existem e estão ativos
         for (Produto produto : produtos) {
-            if (!produto.isStatus()) {
+            if (Boolean.FALSE.equals(produto.getStatus())) {
                 throw new InactiveProductException("Produto inativo", produto.getNome());
             }
         }

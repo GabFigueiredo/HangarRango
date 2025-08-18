@@ -16,6 +16,8 @@ import com.igrejacristahangar.cantina.modules.produto.dto.ProdutoRequestDTO;
 import com.igrejacristahangar.cantina.modules.produto.dto.ProdutoResponseDTO;
 import com.igrejacristahangar.cantina.modules.produto.service.ProdutoService;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/cantina/produto")
@@ -36,9 +38,7 @@ public class ProdutoController {
     @PostMapping
     public ResponseEntity<ProdutoResponseDTO> post(@Valid @RequestBody ProdutoRequestDTO produtoRequest) {
 
-        var produto = produtoService.criarProduto(produtoRequest);
-
-        return ResponseEntity.ok(produto);
+        return ResponseEntity.ok(produtoService.criarProduto(produtoRequest));
     }
 
     @Operation(summary = "Altera o status de um produto", method = "PATCH", description = "Rota responsável por alterar um status de um produto")
@@ -52,10 +52,14 @@ public class ProdutoController {
     public ResponseEntity<ProdutoResponseDTO> patch(@Valid @RequestBody StatusProdutoRequestDTO requestDTO) {
         var produto = produtoService.encontrarProdutoPeloSeuID(requestDTO.getProdutoId());
 
-        var responseDTO = produtoService.alterarStatusDoProduto(produto, requestDTO.isStatus());
+        var responseDTO = produtoService.alterarStatusDoProduto(produto, requestDTO.getStatus());
 
         return ResponseEntity.ok(responseDTO);
 
     }
 
+    @GetMapping
+    public ResponseEntity<List<ProdutoResponseDTO>> findAllProducts() {
+        return ResponseEntity.ok(produtoService.buscarTodosProdutos());
+    }
 }

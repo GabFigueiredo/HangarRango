@@ -24,7 +24,7 @@ public class Produto {
 
     private String nome;
     private BigDecimal preco;
-    private boolean status;
+    private Boolean status;
     private String descricao;
     private Integer quantidade;
 
