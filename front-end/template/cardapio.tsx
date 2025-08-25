@@ -4,7 +4,9 @@ import ProductCard from "@/components/product-card";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { SidebarInset } from "@/components/ui/sidebar";
+import { GetAllAvailableProducts } from "@/service/product/get-all-available-products";
 import { ProdutoType } from "@/types/Produto";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
 export const produtos: ProdutoType[] = [
@@ -59,18 +61,28 @@ export const produtos: ProdutoType[] = [
 ];
 
 export default function CardapioPage() {
+  const { data, isSuccess } = useQuery({
+    queryKey: ["availabe-products"],
+    queryFn: GetAllAvailableProducts
+  })
+
+  if (isSuccess) {
+    console.log("SUCESSO", data)
+
+  }
+
   return (
     <SidebarInset className="h-full">
       <SiteHeader name="Pedir" />
       <div className="flex flex-wrap gap-5 p-5">
-        {produtos ? (
-          produtos.map((p) => {
+        {data ? (
+          data.map((p) => {
             return <ProductCard key={p.id} produto={p} />;
           })
         ) : (
           <div className="flex flex-col items-center gap-3 mt-5">
             <h1 className="text-4xl font-bold">Ops..</h1>
-            <p>Você não tem itens no carrinho.</p>
+            <p>A cantina está fechada.</p>
             <Link href={"/pedir"}>
               <Button>Ir ao cardápio</Button>
             </Link>

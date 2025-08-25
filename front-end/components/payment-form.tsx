@@ -6,6 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "./ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { CreateOrder } from "@/service/orders/create-order";
+import { PedidoRequest } from "@/types/order/Pedido";
+import { useCart } from "@/context/CartContext";
+import { ProductToProductRequest } from "@/util/product-to-product-request";
+import { StatusPagamento } from "@/enums/order/statusPagamento.enum";
 
 const formSchema = z.object({
   nome: z.string().min(2, {
@@ -20,6 +26,14 @@ const formSchema = z.object({
 type FormSchemaType = z.infer<typeof formSchema>
 
 export default function PaymentForm() {
+    const { mutate } = useMutation({
+        mutationFn: (data: PedidoRequest) => CreateOrder(data),
+        onSuccess: () => console.log("DEU BOM"),
+        onError: (error) => console.log(error)
+    })
+
+    const { orders, total } = useCart()
+
     const form = useForm<FormSchemaType>({
             resolver: zodResolver(formSchema),
             defaultValues: {
@@ -28,8 +42,30 @@ export default function PaymentForm() {
             },
         })
     
-    function onSubmit() {
+    function onSubmit(data: FormSchemaType) {
+        // Se for pix, é direcionado para página de pix
+        if (data.formaPagamento === "PIX") {
+            return;
+        }
         
+        // Formata o pedido para o tipo necessário do request
+        const formattedOrders = ProductToProductRequest(orders);
+
+        const nome = data.nome.trim() + ` ${data.sobrenome.trim()}`
+
+        // Monta o objeto
+        const requestObject: PedidoRequest = {
+            clienteNome: nome,
+            formaPagamento: data.formaPagamento,
+            preco: total,
+            itens: formattedOrders,
+            statusPagamento: StatusPagamento.PENDENTE
+        }
+
+        console.log(requestObject)
+        
+        // Faz a requisição
+        mutate(requestObject);
     }
 
     return (

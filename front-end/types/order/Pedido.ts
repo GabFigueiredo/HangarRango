@@ -2,6 +2,7 @@ import { FormaPagamento } from "@/enums/order/formaPagamento.enum";
 import { PedidoStatus } from "@/enums/order/pedidoStatus.enum";
 import { StatusPagamento } from "@/enums/order/statusPagamento.enum";
 import { ProdutoPedidoType } from "../ProdutoPedido";
+import { ItensRequest } from "../Produto";
 
 export interface PedidoResponse {
   id: string;
@@ -13,6 +14,14 @@ export interface PedidoResponse {
   numeroPedido: number;
   createdAt: string;
   itens: ProdutoPedidoType[];
+}
+
+export interface PedidoRequest {
+  clienteNome: string;
+  preco: number;
+  statusPagamento: StatusPagamento;
+  formaPagamento: FormaPagamento;
+  itens: ItensRequest[];
 }
 
 export interface PedidoResumo {

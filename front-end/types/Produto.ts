@@ -13,3 +13,8 @@ export interface ProdutoStatus {
   produtoId: string;
   status: boolean;
 }
+
+export interface ItensRequest {
+  produtoId: string;
+  quantidade: number;
+}
