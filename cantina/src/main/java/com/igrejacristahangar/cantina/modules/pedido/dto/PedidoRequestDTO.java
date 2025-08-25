@@ -25,6 +25,6 @@ public class PedidoRequestDTO {
     private STATUS_PAGAMENTO statusPagamento;
 
     @NotNull(message = "A lista de itens é obrigatória")
-    List<DetalhesProdutoDTO> detalhesProdutos;
+    List<DetalhesProdutoDTO> itens;
 
 }

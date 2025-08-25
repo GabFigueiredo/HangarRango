@@ -113,7 +113,7 @@ public class ProdutoService {
      * @throws InactiveProductException se algum produto estiver inativo.
      */
     public List<Produto> buscarProdutosAtivos(PedidoRequestDTO requestDTO) {
-        List<UUID> produtoIds = requestDTO.getDetalhesProdutos().stream()
+        List<UUID> produtoIds = requestDTO.getItens().stream()
                 .map(DetalhesProdutoDTO::getProdutoId)
                 .toList();
 
@@ -128,6 +128,10 @@ public class ProdutoService {
         }
 
         return produtos;
+    }
+
+    public List<ProdutoResponseDTO> buscarTodosProdutosDisponiveis() {
+        return produtoMapper.ProductListToResponseList(produtoRepository.findAllAvailableProducts());
     }
 
 }

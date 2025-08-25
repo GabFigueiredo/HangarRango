@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.FutureOrPresent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,8 +59,27 @@ public class ProdutoController {
 
     }
 
+    @Operation(summary = "Busca todos os produtos", method = "GET", description = "Rota responsável por buscar todos os produtos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca feita com sucesso.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProdutoResponseDTO.class)
+                    )})
+    })
     @GetMapping
     public ResponseEntity<List<ProdutoResponseDTO>> findAllProducts() {
         return ResponseEntity.ok(produtoService.buscarTodosProdutos());
+    }
+
+    @Operation(summary = "Busca todos os produtos disponíveis", method = "GET", description = "Rota responsável por buscar todos os produtos disponíveis")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca feita com sucesso.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProdutoResponseDTO.class)
+                    )})
+    })
+    @GetMapping("/produtos-disponiveis")
+    public ResponseEntity<List<ProdutoResponseDTO>> findAllAvailableProducts() {
+        return ResponseEntity.ok(produtoService.buscarTodosProdutosDisponiveis());
     }
 }

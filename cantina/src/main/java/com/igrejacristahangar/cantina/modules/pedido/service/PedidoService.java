@@ -117,7 +117,7 @@ public class PedidoService {
         // Criar itens do pedido e atualizar estoque
         List<ProdutoPedido> itensPedido = produtoPedidoService.criarItensDoPedido(
                 listaProdutos,
-                requestDTO.getDetalhesProdutos(),
+                requestDTO.getItens(),
                 novoPedido
         );
 
