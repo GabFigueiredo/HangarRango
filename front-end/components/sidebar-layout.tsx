@@ -1,13 +1,14 @@
-"use client";
+'use client'
 
-import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { ReactNode } from "react";
+import { SidebarProvider } from "./ui/sidebar";
 
-interface LayoutProps {
+interface SidebarLayoutProps {
   children: ReactNode;
+  sidebar: ReactNode;
 }
-export default function Layout({ children }: LayoutProps) {
+
+export default function SideBarLayout({ children, sidebar }: SidebarLayoutProps) {
   return (
     <SidebarProvider
       style={
@@ -17,7 +18,7 @@ export default function Layout({ children }: LayoutProps) {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      {sidebar}
       <main className="w-full">{children}</main>
     </SidebarProvider>
   );

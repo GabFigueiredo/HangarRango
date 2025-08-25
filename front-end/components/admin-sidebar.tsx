@@ -2,10 +2,7 @@
 
 import * as React from "react"
 import {
-  IconCamera,
   IconDashboard,
-  IconFileAi,
-  IconFileDescription,
   IconFolder,
   IconInnerShadowTop,
   IconListDetails,
@@ -22,8 +19,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { NavDocuments } from "./nav-documents"
-import { Lock, Pizza, Users } from "lucide-react"
 
 const data = {
   user: {
@@ -34,90 +29,24 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/cantina/admin/dashboard",
+      url: "/admin",
       icon: IconDashboard,
     },
     {
       title: "Área de preparação",
-      url: "/cantina/admin/preparacao",
+      url: "/admin/preparacao",
       icon: IconListDetails,
     },
     {
       title: "Produtos",
-      url: "/cantina/admin/produtos",
+      url: "/admin/produtos",
       icon: IconFolder,
     },
   ],
 
-  client: [
-    {
-      name: "Pedir",
-      url: "/cantina/admin/pedir",
-      icon: Pizza,
-    },
-    {
-      name: "Conta do cliente",
-      url: "/cantina/admin/cliente",
-      icon: Users,
-    },
-    {
-      name: "Permissão",
-      url: "/cantina/admin/permissões",
-      icon: Lock,
-    }
-  ],
-
-  navClouds: [
-    {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -137,7 +66,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.client}/>
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

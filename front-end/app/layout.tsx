@@ -3,6 +3,8 @@ import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ReactQueryProvider } from "@/providers/react-query-provider";
+import CartProvider from "@/context/CartContext";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -36,8 +38,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
             >
-              {children}
+              <CartProvider>
+                  {children}
+              </CartProvider>
           </ThemeProvider>
+          <Toaster richColors/>
         </ReactQueryProvider>
       </body>
     </html>

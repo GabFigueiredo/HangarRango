@@ -37,7 +37,7 @@ export function NavDocuments({
               <SidebarMenuButton className={cn(
                   "min-w-8 duration-200 ease-linear cursor-pointer",
                   "hover:bg-primary hover:text-primary-foreground",
-                  pathname === item.url || pathname.includes(item.url)
+                  pathname === item.url
                     ? "bg-primary text-primary-foreground"
                     : "bg-transparent text-foreground"
                 )} asChild>

@@ -22,7 +22,7 @@ export default function OrderFilterFields({ table }: OrderFilterFieldsProps) {
               onChange={(event) =>
                 table.getColumn("clienteNome")?.setFilterValue(event.target.value)
               }
-              className="w-full"
+              className="w-full py-2"
             />
           </div>
           <div className="flex flex-col gap-2 flex-1 w-full">
