@@ -1,4 +1,5 @@
 export enum PedidoStatus {
+  PENDENTE = "PENDENTE",
   PREPARANDO = "PREPARANDO",
   CONCLUIDO = "CONCLUIDO",
 }

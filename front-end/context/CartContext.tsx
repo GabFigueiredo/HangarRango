@@ -3,6 +3,7 @@
 import { ProdutoType } from "@/types/Produto";
 import React, { createContext, useContext } from "react";
 import { produce } from "immer"  
+import { PedidoResponse } from "@/types/order/Pedido";
 
 interface CartProviderProps {
     children: React.ReactNode;
@@ -13,13 +14,18 @@ interface CartContextType {
     addItem: (newProduct: ProdutoType) => void;
     removeItem: (productToRemove: ProdutoType) => void;
     changeItemAmount: (productToChange: ProdutoType, amount: number) => void;
+    clearCart: () => void;
+    addCompletedOrder: (newOrder: PedidoResponse) => void;
+    completedOrders: PedidoResponse[];
     total: number;
+
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export default function CartProvider({ children }: CartProviderProps) {
     const [orders, setOrders] = React.useState<ProdutoType[]>([]);
+    const [completedOrders, setCompletedOrders] = React.useState<PedidoResponse[]>([]);
 
     function addItem(newProduct: ProdutoType) {
         const nextState = produce(orders, draft => {
@@ -65,12 +71,27 @@ export default function CartProvider({ children }: CartProviderProps) {
         setOrders(nextState)
     }
 
+    function clearCart() {
+        setOrders([]);
+    }
+
+
+    function addCompletedOrder(newOrder: PedidoResponse) {
+        const nextState = produce(completedOrders, draft => {
+            draft.push(newOrder);
+        })
+
+        setCompletedOrders(nextState);
+    }
+
+
+    // Calcula o total do carrinho
     const total = React.useMemo(() => {
         return orders.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
     }, [orders]);
 
     return (
-        <CartContext.Provider value={{orders, addItem, removeItem, changeItemAmount, total}}>
+        <CartContext.Provider value={{orders, addItem, removeItem, changeItemAmount, total, addCompletedOrder, completedOrders, clearCart}}>
             {children}
         </CartContext.Provider>
     )

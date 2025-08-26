@@ -5,6 +5,8 @@ import { Badge } from "../../ui/badge";
 import { Label } from "../../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 import { format } from "date-fns";
+import { ChangePaymentStatus } from "@/service/orders/change-payment-status";
+import { StatusPagamento } from "@/enums/order/statusPagamento.enum";
 export const OrderColumns: ColumnDef<PedidoResponse>[] = [
   {
     accessorKey: "clienteNome",
@@ -68,7 +70,7 @@ export const OrderColumns: ColumnDef<PedidoResponse>[] = [
           <Label className="sr-only">
             Status do pedido
           </Label>
-          <Select>
+          <Select onValueChange={() => ChangePaymentStatus({id: row.original.id, status: StatusPagamento.EFETUADO})}>
             <SelectTrigger
               className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
               size="sm"
@@ -76,7 +78,7 @@ export const OrderColumns: ColumnDef<PedidoResponse>[] = [
               <SelectValue placeholder="Pendente" />
             </SelectTrigger>
             <SelectContent align="end">
-              <SelectItem value="CONCLUIDO">Concluído</SelectItem>
+              <SelectItem value="EFETUADO">Efetuado</SelectItem>
             </SelectContent>
           </Select>
         </>

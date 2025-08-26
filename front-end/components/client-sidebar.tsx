@@ -37,7 +37,7 @@ const data = {
     },
     {
       name: "Meus pedidos",
-      url: "/cantina/cliente",
+      url: "/cantina/meus-pedidos",
       icon: Users,
     },
   ],

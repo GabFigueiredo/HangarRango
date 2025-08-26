@@ -8,7 +8,7 @@ import { getAllPreparingOrders } from "@/service/orders/get-all-preparing-orders
 import { useQuery } from "@tanstack/react-query";
 
 export default function PreparacaoPage() {
-    const { data, isLoading } = useQuery({
+    const { data } = useQuery({
       queryKey: ["pedidos-pendentes"],
       queryFn: getAllPreparingOrders
     });

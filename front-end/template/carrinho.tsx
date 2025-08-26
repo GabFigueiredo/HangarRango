@@ -40,10 +40,10 @@ export default function CarrinhoPage() {
           </div>
         </>
       ) : (
-        <div className="flex flex-col items-center gap-3 mt-5">
+        <div className="flex flex-col w-full justify-center items-center gap-3 mt-5">
           <h1 className="text-4xl font-bold">Ops..</h1>
           <p>Você não colocou nenhum item no carrinho.</p>
-          <Link href={"/pedir"}>
+          <Link href={"/cantina"}>
             <Button>Ir ao cardápio</Button>
           </Link>
         </div>

@@ -1,3 +1,5 @@
+'use client'
+
 import z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { FormaPagamento } from "@/enums/order/formaPagamento.enum";
@@ -8,10 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Button } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { CreateOrder } from "@/service/orders/create-order";
-import { PedidoRequest } from "@/types/order/Pedido";
+import { PedidoRequest, PedidoResponse } from "@/types/order/Pedido";
 import { useCart } from "@/context/CartContext";
 import { ProductToProductRequest } from "@/util/product-to-product-request";
 import { StatusPagamento } from "@/enums/order/statusPagamento.enum";
+import { useRouter } from "next/navigation";
+import { DialogTitle } from "./ui/dialog";
 
 const formSchema = z.object({
   nome: z.string().min(2, {
@@ -26,21 +30,28 @@ const formSchema = z.object({
 type FormSchemaType = z.infer<typeof formSchema>
 
 export default function PaymentForm() {
+    const { addCompletedOrder, clearCart } = useCart();
+    const router = useRouter();
+
     const { mutate } = useMutation({
         mutationFn: (data: PedidoRequest) => CreateOrder(data),
-        onSuccess: () => console.log("DEU BOM"),
+        onSuccess: (data: PedidoResponse) => {
+            router.push("/cantina/meus-pedidos")
+            addCompletedOrder(data)
+            clearCart();
+        },
         onError: (error) => console.log(error)
     })
 
     const { orders, total } = useCart()
 
     const form = useForm<FormSchemaType>({
-            resolver: zodResolver(formSchema),
-            defaultValues: {
-                nome: "",
-                sobrenome: "",
-            },
-        })
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            nome: "",
+            sobrenome: "",
+        },
+    })
     
     function onSubmit(data: FormSchemaType) {
         // Se for pix, é direcionado para página de pix
@@ -50,7 +61,6 @@ export default function PaymentForm() {
         
         // Formata o pedido para o tipo necessário do request
         const formattedOrders = ProductToProductRequest(orders);
-
         const nome = data.nome.trim() + ` ${data.sobrenome.trim()}`
 
         // Monta o objeto
@@ -61,8 +71,6 @@ export default function PaymentForm() {
             itens: formattedOrders,
             statusPagamento: StatusPagamento.PENDENTE
         }
-
-        console.log(requestObject)
         
         // Faz a requisição
         mutate(requestObject);
@@ -70,6 +78,9 @@ export default function PaymentForm() {
 
     return (
         <Form {...form}>
+            <DialogTitle>
+                Detalhes do pagamento
+            </DialogTitle>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <FormField
                     control={form.control}

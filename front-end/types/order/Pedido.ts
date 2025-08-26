@@ -40,6 +40,11 @@ export interface PreparacaoResponse {
   listaProdutos: produtoPreparacao[];
 }
 
+export interface StatusPagamentoRequest {
+  id: string;
+  status: StatusPagamento;
+}
+
 export interface PedidoPage {
   number: number;
   size: number;

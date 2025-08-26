@@ -15,7 +15,7 @@ interface StageOrderProps {
 export default function StageOrder({ Pedido }: StageOrderProps) {
     const queryClient = useQueryClient();
     
-    const { mutate, isSuccess, isError } = useMutation({
+    const { mutate } = useMutation({
         mutationFn: () => setOrderStatus({
             clientId: Pedido.id,
             pedidoStatus: PedidoStatus.CONCLUIDO
@@ -35,14 +35,6 @@ export default function StageOrder({ Pedido }: StageOrderProps) {
 
     function handleOrderConcludes() {
         mutate()
-    }
-
-    if (isSuccess) {
-        toast.success("Pedido concluído com sucesso!")
-    }
-
-    if (isError) {
-        toast.error("Não foi possível concluir o pedido")
     }
     
     return (
@@ -71,6 +63,3 @@ export default function StageOrder({ Pedido }: StageOrderProps) {
         </div>
     )
 }
-
-
-// *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card @container/card flex flex-col flex-1

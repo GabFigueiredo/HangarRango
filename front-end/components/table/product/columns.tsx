@@ -13,7 +13,6 @@ import { ProdutoType } from "@/types/Produto";
 import { ChangeProductStatus } from "@/service/product/change-product-status";
 
 export const ProductColumns: ColumnDef<ProdutoType>[] = [
-  
   {
     accessorKey: "nome",
     header: "Nome",

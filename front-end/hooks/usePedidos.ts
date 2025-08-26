@@ -15,6 +15,7 @@ export function usePedidos(wsUrl = `${apiUrl}/preparacao`) {
   React.useEffect(() => {
     const socket = new SockJS(wsUrl);
     const client = Stomp.over(socket);
+    console.log(wsUrl);
 
     function AtualizarLista(Pedido: PreparacaoResponse) {
       queryClient.setQueryData(
