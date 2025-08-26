@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.igrejacristahangar.cantina.modules.pedido.dto.*;
+import com.igrejacristahangar.cantina.modules.pedido.enums.FORMA_PAGAMENTO;
 import com.igrejacristahangar.cantina.modules.pedido.repository.PedidoSpec;
 import com.igrejacristahangar.cantina.modules.produto.repository.ProdutoRepository;
 import com.igrejacristahangar.cantina.modules.produto_pedido.model.ProdutoPedido;
@@ -101,7 +102,7 @@ public class PedidoService {
      * @throws InactiveProductException se algum produto informado estiver inativo.
      */
     public PedidoResponseDTO criarPedido(PedidoRequestDTO requestDTO) {
-        // Buscar produtos ativos
+        // Busca produtos e verifica se estão ativos
         List<Produto> listaProdutos = produtoService.buscarProdutosAtivos(requestDTO);
 
         // Criar o pedido (ainda sem itens)
@@ -114,20 +115,27 @@ public class PedidoService {
                 .numeroPedido(this.gerarCodigoDePedido())
                 .build();
 
-        // Criar itens do pedido e atualizar estoque
+        switch (requestDTO.getFormaPagamento()) {
+            case CARTAO, DINHEIRO -> novoPedido.setStatus(STATUS.PENDENTE);
+            case MARCADO, PIX -> novoPedido.setStatus(STATUS.PREPARANDO);
+        }
+
+        // Criar itens do pedido e atualizar estoque no objeto
         List<ProdutoPedido> itensPedido = produtoPedidoService.criarItensDoPedido(
                 listaProdutos,
                 requestDTO.getItens(),
                 novoPedido
         );
 
+        // Atualiza o estoque dos produtos no banco
+        for (ProdutoPedido pp: itensPedido) {
+            produtoRepository.save(pp.getProduto());
+        }
+
         // Associa os itens ao pedido
         novoPedido.setItens(itensPedido);
 
-        // Salva os produtos atualizados (quantidade) de uma vez
-        produtoRepository.saveAll(listaProdutos);
-
-        // Salva o pedido junto com os itens (cascade)
+        // Salva o pedido junto com os itens
         Pedido pedidoSalvo = pedidoRepository.save(novoPedido);
 
         // Mapeia para DTO de resposta
@@ -215,7 +223,4 @@ public class PedidoService {
                 .totalPrecoDeHoje(totalPrecoDeHoje)
                 .build();
     }
-
-
-
 }

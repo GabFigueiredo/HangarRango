@@ -50,6 +50,9 @@ public class ProdutoPedidoService {
                 );
             }
 
+            // Diminui a quantidade no estoque
+            produto.setQuantidade(produto.getQuantidade() - detalhes.getQuantidade());
+
             ProdutoPedido item = ProdutoPedido.builder()
                     .pedido(pedido)
                     .produto(produto)

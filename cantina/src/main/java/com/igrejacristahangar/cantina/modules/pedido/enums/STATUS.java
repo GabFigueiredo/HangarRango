@@ -1,6 +1,7 @@
 package com.igrejacristahangar.cantina.modules.pedido.enums;
 
 public enum STATUS {
+    PENDENTE("Pendente"),
     PREPARANDO("Preparando"),
     CONCLUIDO("Concluído");
 
