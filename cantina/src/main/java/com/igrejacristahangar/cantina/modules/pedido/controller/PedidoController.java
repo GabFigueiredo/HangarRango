@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import com.igrejacristahangar.cantina.modules.pedido.model.Pedido;
 import com.igrejacristahangar.cantina.modules.pedido.service.PedidoService;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -156,6 +157,11 @@ public class PedidoController {
         PedidoResponseDTO responseDTO = pedidoService.alterarStatusDePedido(pedido, requestDTO);
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    @PatchMapping("/pagamento")
+    public ResponseEntity<PedidoResponseDTO> patch(@Valid @RequestBody StatusPagamentoDTO requestDTO) {
+            return ResponseEntity.ok(pedidoService.alterarStatusDePagamento(requestDTO));
     }
 
 

@@ -142,7 +142,9 @@ public class PedidoService {
         PedidoResponseDTO pedidoMapeado = pedidoMapper.PedidoToPedidoResponseDTO(pedidoSalvo);
 
         // Envia notificação via WebSocket
-        messagingTemplate.convertAndSend("/cantina/preparacao", pedidoMapeado);
+        switch (pedidoMapeado.getFormaPagamento()) {
+            case PIX, MARCADO -> messagingTemplate.convertAndSend("/cantina/preparacao", pedidoMapeado);
+        }
 
         return pedidoMapeado;
     }
@@ -169,16 +171,27 @@ public class PedidoService {
      * Altera o status de um pedido (PREPARANDO, CONCLUÍDO)
      * e o status de pagamento (CARTÃO, PIX, DINHEIRO, MARCADO)
      *
-     * @param pedido
      * @param requestDTO ID do pedido, novo status de pedido e novo status de pagamento
      * @return PedidoResponseDTO
      */
-    public PedidoResponseDTO alterarStatusDePagamento(Pedido pedido, StatusRequestDTO requestDTO) {
-        pedido.setStatusPagamento(requestDTO.getStatusPagamento());
+    public PedidoResponseDTO alterarStatusDePagamento(StatusPagamentoDTO requestDTO) {
+        Pedido pedido = this.buscarPedidoPorID(requestDTO.getId());
+
+        pedido.setStatusPagamento(requestDTO.getStatus());
+
+        switch (pedido.getFormaPagamento()) {
+            case CARTAO, DINHEIRO -> pedido.setStatus(STATUS.PREPARANDO);
+        }
 
         pedidoRepository.save(pedido);
 
-        return pedidoMapper.PedidoToPedidoResponseDTO(pedido);
+        PedidoResponseDTO pedidoResponse = pedidoMapper.PedidoToPedidoResponseDTO(pedido);
+
+        switch (pedido.getFormaPagamento()) {
+            case CARTAO, DINHEIRO -> messagingTemplate.convertAndSend("/cantina/preparacao", pedidoResponse);
+        }
+
+        return pedidoResponse;
     }
 
     public PedidoResponseDTO alterarStatusDePedido(Pedido pedido, StatusRequestDTO requestDTO) {
