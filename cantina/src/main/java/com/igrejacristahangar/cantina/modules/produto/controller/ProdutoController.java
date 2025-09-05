@@ -21,7 +21,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/cantina/produto")
+@RequestMapping("/produto")
 @Tag(name = "Produto", description = "Endpoints relacionados ao produto")
 public class ProdutoController {
 

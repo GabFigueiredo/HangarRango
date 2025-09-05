@@ -4,7 +4,6 @@ import com.igrejacristahangar.cantina.modules.pedido.dto.*;
 import com.igrejacristahangar.cantina.modules.pedido.enums.FORMA_PAGAMENTO;
 import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS;
 import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS_PAGAMENTO;
-import com.igrejacristahangar.cantina.modules.produto_pedido.service.ProdutoPedidoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,7 +15,6 @@ import jakarta.validation.Valid;
 import com.igrejacristahangar.cantina.modules.pedido.model.Pedido;
 import com.igrejacristahangar.cantina.modules.pedido.service.PedidoService;
 
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,13 +30,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cantina")
+@RequestMapping("/pedido")
 @Tag(name = "Pedido", description = "Endpoints relacionados ao pedido.")
 public class PedidoController {
 
     @Autowired
     private PedidoService pedidoService;
-
 
     @Operation(summary = "Busca pedidos por paginação", method = "GET", description = "Rota responsável pela busca de pedidos por paginação")
     @ApiResponses(value = {
@@ -73,7 +70,7 @@ public class PedidoController {
                             schema = @Schema(implementation = PedidoResponseDTO.class)
                     )})
     })
-    @GetMapping("/pedidos")
+    @GetMapping
     public ResponseEntity<List<PedidoResponseDTO>> getAllOrders() {
         return ResponseEntity.ok(pedidoService.buscarTodosOsPedidos());
     }
@@ -85,7 +82,7 @@ public class PedidoController {
                             schema = @Schema(implementation = PedidoResponseDTO.class)
                     )})
     })
-    @GetMapping("/pedido/filtrar")
+    @GetMapping("/filtrar")
     public ResponseEntity<PagedModel<EntityModel<Pedido>>> getOrdersByFilter(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -122,7 +119,7 @@ public class PedidoController {
                             schema = @Schema(implementation = PedidoResumo.class)
                     )})
     })
-    @GetMapping("/pedido/resumo")
+    @GetMapping("/resumo")
     public ResponseEntity<PedidoResumo> getSumary() {
         return ResponseEntity.ok(pedidoService.gerarResumoDeVendas());
     }
@@ -134,7 +131,7 @@ public class PedidoController {
                             schema = @Schema(implementation = PedidoResponseDTO.class)
                     )})
     })
-    @PostMapping("/pedido")
+    @PostMapping
     public ResponseEntity<PedidoResponseDTO> post(@Valid @RequestBody PedidoRequestDTO requestDTO) {
 
         var responseDTO = pedidoService.criarPedido(requestDTO);
@@ -149,7 +146,7 @@ public class PedidoController {
                             schema = @Schema(implementation = PedidoResponseDTO.class)
                     )})
     })
-    @PatchMapping("/pedido")
+    @PatchMapping("/status")
     public ResponseEntity<PedidoResponseDTO> patch(@Valid @RequestBody StatusRequestDTO requestDTO) {
 
         Pedido pedido = pedidoService.buscarPedidoPorID(requestDTO.getClientId());
