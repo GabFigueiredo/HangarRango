@@ -6,11 +6,13 @@ import SockJS from "sockjs-client";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { PreparacaoResponse } from "@/types/order/Pedido";
+import { useUser } from "@/context/UserContext";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export function usePedidos(wsUrl = `${apiUrl}/preparacao`) {
   const queryClient = useQueryClient();
+  const { token } = useUser();
 
   React.useEffect(() => {
     const socket = new SockJS(wsUrl);
@@ -37,7 +39,7 @@ export function usePedidos(wsUrl = `${apiUrl}/preparacao`) {
       );
     }
 
-    client.connect({}, () => {
+    client.connect({ Authorization: `Bearer ${token}` }, () => {
       console.log("Conectado ao WebSocket!");
 
       client.subscribe("/cantina/preparacao", (message) => {
@@ -53,5 +55,5 @@ export function usePedidos(wsUrl = `${apiUrl}/preparacao`) {
         });
       }
     };
-  }, [wsUrl, queryClient]);
+  }, [wsUrl, queryClient, token]);
 }

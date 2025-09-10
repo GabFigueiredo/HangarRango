@@ -8,9 +8,14 @@ import { getAllPreparingOrders } from "@/service/orders/get-all-preparing-orders
 import { useQuery } from "@tanstack/react-query";
 
 export default function PreparacaoPage() {
-    const { data } = useQuery({
+    const { data: response } = useQuery({
       queryKey: ["pedidos-pendentes"],
-      queryFn: getAllPreparingOrders
+      queryFn: getAllPreparingOrders,
+      refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    staleTime: Infinity,
+
     });
 
     usePedidos()
@@ -21,7 +26,7 @@ export default function PreparacaoPage() {
         <div className="@container/main flex flex-1 flex-col gap-2 p-5">
             <div className="">
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    {data?.map((pedido) => (
+                    {response?.map((pedido) => (
                     <li key={pedido.id}>
                         <StageOrder Pedido={pedido}/>
                     </li>

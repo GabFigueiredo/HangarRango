@@ -1,10 +1,10 @@
-import api from "@/api/axios";
-import { PedidoResponse, PreparacaoResponse } from "@/types/order/Pedido";
+import { privateApi } from "@/api/privateApi";
+import { PedidoResponse } from "@/types/order/Pedido";
 
 export async function getAllPreparingOrders() {
-  const url = "/cantina/pedidos-pendentes";
+  const url = "/admin/pedido/pedidos-pendentes";
 
-  const { data } = await api.get<PedidoResponse[]>(url);
+  const { data } = await privateApi.get<PedidoResponse[]>(url);
 
   return data;
 }

@@ -1,10 +1,10 @@
-import api from "@/api/axios";
+import { privateApi } from "@/api/privateApi";
 import { ProdutoType } from "@/types/Produto";
 
 export async function getAllProducts() {
-  const url = "/cantina/produto";
+  const url = "/admin/produto";
 
-  const { data } = await api.get<ProdutoType[]>(url);
+  const { data } = await privateApi.get<ProdutoType[]>(url);
 
   return data;
 }

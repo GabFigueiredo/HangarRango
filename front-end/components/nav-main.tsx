@@ -15,7 +15,7 @@ import Link from "next/link"
 import React from "react"
 import { cn } from "@/lib/utils"
 
-export function NavMain({ items, }: {
+export function NavMain({ items }: {
   items: {
     title: string
     url: string
@@ -38,7 +38,7 @@ export function NavMain({ items, }: {
                   className={cn(
                     "min-w-8 duration-200 ease-linear cursor-pointer",
                     "hover:bg-primary hover:text-primary-foreground",
-                    pathname === item.url || pathname.includes(item.url)
+                    pathname === item.url
                       ? "bg-primary text-primary-foreground"
                       : "bg-transparent text-foreground"
                   )}

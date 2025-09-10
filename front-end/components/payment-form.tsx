@@ -30,7 +30,7 @@ const formSchema = z.object({
 type FormSchemaType = z.infer<typeof formSchema>
 
 export default function PaymentForm() {
-    const { addCompletedOrder, clearCart } = useCart();
+    const { addCompletedOrder, clearCart, orders, total } = useCart();
     const router = useRouter();
 
     const { mutate } = useMutation({
@@ -42,8 +42,6 @@ export default function PaymentForm() {
         },
         onError: (error) => console.log(error)
     })
-
-    const { orders, total } = useCart()
 
     const form = useForm<FormSchemaType>({
         resolver: zodResolver(formSchema),

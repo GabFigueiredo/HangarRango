@@ -9,6 +9,14 @@ export interface ProdutoType {
   status: boolean;
 }
 
+export interface RequestProdutoType {
+  nome: string;
+  preco: number;
+  descricao: string;
+  quantidade: number;
+  status: boolean;
+}
+
 export interface ProdutoStatus {
   produtoId: string;
   status: boolean;

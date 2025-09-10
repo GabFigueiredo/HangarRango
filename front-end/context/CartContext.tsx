@@ -18,7 +18,6 @@ interface CartContextType {
     addCompletedOrder: (newOrder: PedidoResponse) => void;
     completedOrders: PedidoResponse[];
     total: number;
-
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -75,7 +74,6 @@ export default function CartProvider({ children }: CartProviderProps) {
         setOrders([]);
     }
 
-
     function addCompletedOrder(newOrder: PedidoResponse) {
         const nextState = produce(completedOrders, draft => {
             draft.push(newOrder);
@@ -83,7 +81,6 @@ export default function CartProvider({ children }: CartProviderProps) {
 
         setCompletedOrders(nextState);
     }
-
 
     // Calcula o total do carrinho
     const total = React.useMemo(() => {

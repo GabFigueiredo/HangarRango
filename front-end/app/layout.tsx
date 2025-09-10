@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ReactQueryProvider } from "@/providers/react-query-provider";
 import CartProvider from "@/context/CartContext";
 import { Toaster } from "sonner";
+import UserProvider from "@/context/UserContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -38,9 +39,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
             >
-              <CartProvider>
-                  {children}
-              </CartProvider>
+              <UserProvider>
+                <CartProvider>
+                    {children}
+                </CartProvider>
+              </UserProvider>
           </ThemeProvider>
           <Toaster richColors/>
         </ReactQueryProvider>

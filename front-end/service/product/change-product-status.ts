@@ -1,11 +1,11 @@
-import api from "@/api/axios";
+import { privateApi } from "@/api/privateApi";
 import { ProdutoStatus, ProdutoType } from "@/types/Produto";
 import { toast } from "sonner";
 
 export async function ChangeProductStatus(newStatus: ProdutoStatus) {
-  const url = "/cantina/produto";
+  const url = "/admin/produto";
 
-  const response = await api.patch<ProdutoType>(url, newStatus);
+  const response = await privateApi.patch<ProdutoType>(url, newStatus);
 
   if (response.status === 200) {
     toast.success("Status alterado com sucesso!");

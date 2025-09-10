@@ -11,7 +11,10 @@ export default function CardapioPage() {
   const { data, isLoading, isSuccess } = useQuery({
     queryKey: ["availabe-products"],
     queryFn: GetAllAvailableProducts,
-    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    staleTime: Infinity,
   });
 
   return (

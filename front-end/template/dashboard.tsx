@@ -6,16 +6,30 @@ import { DataTable } from "@/components/ui/data-table"
 import {
   SidebarInset,
 } from "@/components/ui/sidebar"
+import { Skeleton } from "@/components/ui/skeleton"
 import { getAllOrders } from "@/service/orders/get-all-orders"
 import { useQuery } from "@tanstack/react-query"
+import React from "react"
+import { toast } from "sonner"
 
 
 export default function DashboardPage() {
-    const { data } = useQuery({
+    const { data: response, isLoading, isError, isSuccess } = useQuery({
         queryKey: ["orders"],
         queryFn: () => getAllOrders(),
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+        refetchInterval: false,
+        staleTime: Infinity,
     });
-  
+
+    if (isError) {
+        toast.error("Não foi possível carregar os dados.", { id: "orders-toast" });
+    }
+    if (isSuccess) {
+        toast.success("Dados carregados com sucesso.", { id: "orders-toast" });
+    }
+
     return (
         <>
         <SidebarInset className="h-full">
@@ -26,7 +40,17 @@ export default function DashboardPage() {
                     <SectionCards />
                 </div> */}
                 <div className="px-4 lg:px-6">
-                    <DataTable columns={OrderColumns} data={data ?? []} FilterFields={OrderFilterFields} />
+                    {isLoading ?
+                        <div className="flex flex-wrap gap-5 p-5">
+                            {Array.from({length: 8}).map((_, i) => (
+                                <Skeleton key={i} className="w-full h-20" />
+                            ))}
+                        </div>
+                    : isError ?
+                        <p>Não foi possível buscar os pedidos</p>
+                    :
+                        <DataTable columns={OrderColumns} data={response?.data ?? []} FilterFields={OrderFilterFields} />
+                    }
                 </div>
             </div>
             </div>

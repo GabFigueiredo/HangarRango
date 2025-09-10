@@ -3,7 +3,7 @@ import { PedidoResponse, StatusPagamentoRequest } from "@/types/order/Pedido";
 import { toast } from "sonner";
 
 export async function ChangePaymentStatus(newStatus: StatusPagamentoRequest) {
-  const url = "/cantina/pagamento";
+  const url = "/pedido/pagamento";
 
   const response = await api.patch<PedidoResponse>(url, newStatus);
 

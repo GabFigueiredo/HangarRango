@@ -25,9 +25,9 @@ export default function CartItem({ produto } : CartItemProps) {
     }
 
     return (
-        <Card className="flex">
+        <Card className="flex w-full">
             <CardHeader className="flex flex-center justify-between">
-                <h2>{produto.nome}</h2>
+                <h2 className="font-semibold">{produto.nome}</h2>
                 <span>R${produto.preco}</span>
             </CardHeader>
             <CardContent>
@@ -43,7 +43,7 @@ export default function CartItem({ produto } : CartItemProps) {
                         <Plus />
                     </Button>
                 </div>
-                <Button onClick={() => handleRemoveItem()} variant='destructive' >Remover</Button>
+                <Button onClick={() => handleRemoveItem()} className="cursor-pointer" variant='outline' >Remover</Button>
             </CardFooter>
         </Card>
     )
