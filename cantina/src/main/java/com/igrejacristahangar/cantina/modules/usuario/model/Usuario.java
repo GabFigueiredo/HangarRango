@@ -25,6 +25,8 @@ public class Usuario implements UserDetails {
     @GeneratedValue
     private UUID id;
 
+    private String nome;
+
     private String email;
 
     private String senha;

@@ -29,21 +29,21 @@ public class SecurityFilter extends OncePerRequestFilter {
         var token = this.recoverToken(request);
         if (token != null) {
             var email = tokenService.validateToken(token);
-            UserDetails usuario =  usuarioRepository.findByEmail(email);
+
+            UserDetails usuario = usuarioRepository.findByEmail(email);
 
             var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        } else {
-            // Chama o próximo filtro
-            filterChain.doFilter(request, response);
         }
+        // Chama o próximo filtro
+        filterChain.doFilter(request, response);
     }
 
     public String recoverToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
         if (authHeader == null) return null;
 
-        return authHeader.replace("Bearer, ", "");
+        return authHeader.replace("Bearer ", "");
     }
 }

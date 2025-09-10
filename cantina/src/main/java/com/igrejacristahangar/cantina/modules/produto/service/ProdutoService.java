@@ -75,8 +75,6 @@ public class ProdutoService {
 
         var produtoSalvo = produtoRepository.save(novoProduto);
 
-        System.out.println(produtoSalvo.getStatus()); // retorna true
-
         return produtoMapper.ProductToResponse(produtoSalvo);
     }
 
