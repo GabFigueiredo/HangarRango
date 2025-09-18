@@ -16,18 +16,8 @@ import com.igrejacristahangar.cantina.modules.pedido.model.Pedido;
 import com.igrejacristahangar.cantina.modules.pedido.service.PedidoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/pedido")
@@ -37,6 +27,13 @@ public class PedidoController {
     @Autowired
     private PedidoService pedidoService;
 
+    @Operation(summary = "Cria um pedido", method = "POST", description = "Rota responsável pela criação de um pedido")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Criação pedido feita com sucesso",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PedidoResponseDTO.class)
+                    )})
+    })
     @PostMapping
     public ResponseEntity<PedidoResponseDTO> post(@Valid @RequestBody PedidoRequestDTO requestDTO) {
 

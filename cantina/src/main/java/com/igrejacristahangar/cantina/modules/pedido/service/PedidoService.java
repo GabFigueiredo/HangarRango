@@ -4,10 +4,19 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
+import com.igrejacristahangar.cantina.modules.abacatepay.dto.CreatePixQrCodeDTO;
+import com.igrejacristahangar.cantina.modules.abacatepay.dto.Metadata;
+import com.igrejacristahangar.cantina.modules.abacatepay.dto.PixQrCodeResponseDTO;
+import com.igrejacristahangar.cantina.modules.abacatepay.service.AbacateService;
+import com.igrejacristahangar.cantina.modules.cliente.Cliente;
+import com.igrejacristahangar.cantina.modules.cliente.dto.ClienteRequestDTO;
+import com.igrejacristahangar.cantina.modules.cliente.service.ClienteService;
 import com.igrejacristahangar.cantina.modules.pedido.dto.*;
 import com.igrejacristahangar.cantina.modules.pedido.enums.FORMA_PAGAMENTO;
+import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS_PAGAMENTO;
 import com.igrejacristahangar.cantina.modules.pedido.repository.PedidoSpec;
 import com.igrejacristahangar.cantina.modules.produto.repository.ProdutoRepository;
 import com.igrejacristahangar.cantina.modules.produto_pedido.model.ProdutoPedido;
@@ -46,6 +55,12 @@ public class PedidoService {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+
+    @Autowired
+    private ClienteService clienteService;
+
+    @Autowired
+    private AbacateService abacateService;
 
     /**
      * Busca de pedidos por paginação.
@@ -105,9 +120,20 @@ public class PedidoService {
         // Busca produtos e verifica se estão ativos
         List<Produto> listaProdutos = produtoService.buscarProdutosAtivos(requestDTO);
 
+        Cliente cliente;
+        try {
+            cliente = clienteService.findClienteByCpf(requestDTO.getCliente().getTaxId());
+            System.out.println(cliente.toString());
+
+        } catch (ResourceNotFoundException e) {
+            cliente = clienteService.createClient(requestDTO.getCliente());
+            System.out.println("Bateu aqui");
+            System.out.println(cliente.toString());
+        }
+
         // Criar o pedido (ainda sem itens)
         Pedido novoPedido = Pedido.builder()
-                .clienteNome(requestDTO.getClienteNome())
+                .cliente(cliente)
                 .preco(requestDTO.getPreco())
                 .formaPagamento(requestDTO.getFormaPagamento())
                 .statusPagamento(requestDTO.getStatusPagamento())
@@ -116,8 +142,8 @@ public class PedidoService {
                 .build();
 
         switch (requestDTO.getFormaPagamento()) {
-            case CARTAO, DINHEIRO -> novoPedido.setStatus(STATUS.PENDENTE);
-            case MARCADO, PIX -> novoPedido.setStatus(STATUS.PREPARANDO);
+            case CARTAO, DINHEIRO, PIX -> novoPedido.setStatus(STATUS.PENDENTE);
+            case MARCADO -> novoPedido.setStatus(STATUS.PREPARANDO);
         }
 
         // Criar itens do pedido e atualizar estoque no objeto
@@ -138,15 +164,42 @@ public class PedidoService {
         // Salva o pedido junto com os itens
         Pedido pedidoSalvo = pedidoRepository.save(novoPedido);
 
+        // Cria o pixQrCode, se a forma de pagamento for PIX.
+        PixQrCodeResponseDTO abacateResponse = null;
+        if (requestDTO.getFormaPagamento().equals(FORMA_PAGAMENTO.PIX)) {
+            System.out.println("Bateu aqui");
+            abacateResponse = criarPedidoPorPix(cliente, pedidoSalvo);
+        }
+
         // Mapeia para DTO de resposta
         PedidoResponseDTO pedidoMapeado = pedidoMapper.PedidoToPedidoResponseDTO(pedidoSalvo);
+        pedidoMapeado.setAbacateResponse(abacateResponse);
 
         // Envia notificação via WebSocket
-        switch (pedidoMapeado.getFormaPagamento()) {
-            case PIX, MARCADO -> messagingTemplate.convertAndSend("/cantina/preparacao", pedidoMapeado);
+        if (pedidoSalvo.getStatusPagamento().equals(STATUS_PAGAMENTO.PENDENTE)) {
+            messagingTemplate.convertAndSend("/cantina/preparacao", pedidoMapeado);
         }
 
         return pedidoMapeado;
+    }
+
+    public PixQrCodeResponseDTO criarPedidoPorPix(Cliente cliente, Pedido pedido) {
+        ClienteRequestDTO clienteRequest = ClienteRequestDTO.builder()
+                .name(cliente.getName())
+                .email(cliente.getEmail())
+                .cellphone(cliente.getCellphone())
+                .taxId(cliente.getCpf())
+                .build();
+
+        Metadata metadata = new Metadata(pedido.getId());
+
+        CreatePixQrCodeDTO payload = CreatePixQrCodeDTO.builder()
+                .amount(pedido.getPreco().unscaledValue().intValue())
+                .customer(clienteRequest)
+                .metadata(metadata)
+                .build();
+
+        return abacateService.criarPixQrCode(payload);
     }
 
     /**

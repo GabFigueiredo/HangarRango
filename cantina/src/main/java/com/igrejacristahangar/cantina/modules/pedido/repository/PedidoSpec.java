@@ -21,7 +21,7 @@ public class PedidoSpec {
         return (root, query, builder) -> {
 
             if (Objects.nonNull(nome)) {
-                return builder.equal(root.get(Pedido_.CLIENTE_NOME), nome);
+                return builder.equal(root.get(Pedido_.CLIENTE), nome);
             }
 
             return null;

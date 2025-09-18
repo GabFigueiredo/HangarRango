@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.igrejacristahangar.cantina.modules.cliente.Cliente;
 import com.igrejacristahangar.cantina.modules.pedido.enums.FORMA_PAGAMENTO;
 import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS;
 import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS_PAGAMENTO;
@@ -27,7 +28,8 @@ public class Pedido {
     @GeneratedValue
     private UUID id;
 
-    private String clienteNome;
+    @ManyToOne
+    private Cliente cliente;
 
     private BigDecimal preco;
 
