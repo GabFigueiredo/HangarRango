@@ -1,5 +1,6 @@
 "use client";
 
+import AlertPayment from "@/components/alert-payment";
 import CartItem from "@/components/cart-item";
 import PaymentForm from "@/components/payment-form";
 import { SiteHeader } from "@/components/site-header";
@@ -9,9 +10,14 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function CarrinhoPage() {
   const { orders, total } = useCart();
+  const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false);
+  const [isAlertPaymentOpen, setIsAlertPaymentOpen] = useState(false);
+  const [paymentOption, setPaymentOption] = useState<"PAGAMENTO_MANUAL" | "PIX">("PAGAMENTO_MANUAL");
+  const [pixCopiaECola, setPixCopiaECola] = useState("");
 
   return (
     <SidebarInset className="h-full">
@@ -29,14 +35,31 @@ export default function CarrinhoPage() {
               <p>Valor total:</p>
               <h2>R${total}</h2>
             </div>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="w-full">Fazer o pedido</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <PaymentForm />
-                </DialogContent>
-              </Dialog>
+            <Dialog
+              open={isPaymentFormOpen}
+              onOpenChange={setIsPaymentFormOpen}
+            >
+              <DialogTrigger asChild>
+                <Button className="w-full">Fazer o pedido</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <PaymentForm
+                  setIsPaymentFormOpen={setIsPaymentFormOpen}
+                  setIsAlertPaymentOpen={setIsAlertPaymentOpen}
+                  setPixCopiaECola={setPixCopiaECola}
+                  setPaymentOption={setPaymentOption}
+                />
+              </DialogContent>
+            </Dialog>
+            <Dialog
+              open={isAlertPaymentOpen}
+              onOpenChange={setIsAlertPaymentOpen}
+            >
+              <AlertPayment
+                type={paymentOption}
+                pixCopiaECola={pixCopiaECola}
+              />
+            </Dialog>
           </div>
         </>
       ) : (

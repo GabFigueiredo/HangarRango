@@ -25,7 +25,7 @@ export default function CardapioPage() {
           Array.from({length: 5}).map((_, i) => (
             <Skeleton key={i} className="w-full h-20" />
           ))
-        ) : data && isSuccess ? (
+        ) : (data?.length ?? 0) > 0 && isSuccess ? (
           data.map((p) => {
             return <ProductCard key={p.id} produto={p} />;
           })

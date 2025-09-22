@@ -3,6 +3,8 @@ import { PedidoStatus } from "@/enums/order/pedidoStatus.enum";
 import { StatusPagamento } from "@/enums/order/statusPagamento.enum";
 import { ProdutoPedidoType } from "../ProdutoPedido";
 import { ItensRequest } from "../Produto";
+import { Cliente } from "../client/client";
+import { PixQrCodeResponse } from "../abacate/abacate";
 
 export interface PedidoResponse {
   id: string;
@@ -13,11 +15,12 @@ export interface PedidoResponse {
   formaPagamento: FormaPagamento;
   numeroPedido: number;
   createdAt: string;
+  abacateResponse: PixQrCodeResponse;
   itens: ProdutoPedidoType[];
 }
 
 export interface PedidoRequest {
-  clienteNome: string;
+  cliente: Cliente;
   preco: number;
   statusPagamento: StatusPagamento;
   formaPagamento: FormaPagamento;
