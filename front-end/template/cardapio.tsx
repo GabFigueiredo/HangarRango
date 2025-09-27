@@ -20,7 +20,7 @@ export default function CardapioPage() {
   return (
     <SidebarInset className="h-full">
       <SiteHeader name="Pedir" />
-      <div className="flex flex-wrap gap-5 p-5">
+      <div className="flex flex-wrap gap-5 p-5 font-inter">
         {isLoading ? (
           Array.from({length: 5}).map((_, i) => (
             <Skeleton key={i} className="w-full h-20" />

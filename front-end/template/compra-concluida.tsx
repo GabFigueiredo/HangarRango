@@ -19,7 +19,7 @@ export default function CompraConcluida() {
   return (
     <SidebarInset className="h-full">
       <SiteHeader name="Meus pedidos" />
-      <div className="w-full px-4 flex flex-col items-center justify-center">
+      <div className="w-full font-inter px-4 flex flex-col items-center justify-center">
         {completedOrders.length > 0 ? (
           completedOrders.map((order) => {
             return (

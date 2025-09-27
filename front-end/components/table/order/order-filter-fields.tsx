@@ -13,14 +13,14 @@ export default function OrderFilterFields({ table }: OrderFilterFieldsProps) {
     return (
         <div className="flex flex-col md:flex-row gap-5 items-center py-4">
           <div className="flex flex-col gap-2 flex-1 w-full">
-            <Label htmlFor="clienteNome">Nome</Label>
+            <Label htmlFor="cliente.name">Nome</Label>
             <Input
               placeholder="Busque por nome"
               value={
-                (table.getColumn("clienteNome")?.getFilterValue() as string) ?? ""
+                (table.getColumn("cliente.name")?.getFilterValue() as string) ?? ""
               }
               onChange={(event) =>
-                table.getColumn("clienteNome")?.setFilterValue(event.target.value)
+                table.getColumn("cliente.name")?.setFilterValue(event.target.value)
               }
               className="w-full py-2"
             />
@@ -37,7 +37,7 @@ export default function OrderFilterFields({ table }: OrderFilterFieldsProps) {
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Marcado" />
+                <SelectValue placeholder="Sem filtro" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="PREPARANDO">Preparando</SelectItem>
@@ -57,7 +57,7 @@ export default function OrderFilterFields({ table }: OrderFilterFieldsProps) {
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Marcado" />
+                <SelectValue placeholder="Sem filtro" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="PIX">Pix</SelectItem>
@@ -68,21 +68,20 @@ export default function OrderFilterFields({ table }: OrderFilterFieldsProps) {
             </Select>
           </div>
           <div className="flex flex-col gap-2 flex-1 w-full">
-            <Label htmlFor="status_pedido">Status do Pedido</Label>
+            <Label htmlFor="statusPagamento">Status do Pagamento</Label>
             <Select
               value={
-                (table.getColumn("status")?.getFilterValue() as string) ?? ""
+                (table.getColumn("statusPagamento")?.getFilterValue() as string) ?? ""
               }
               onValueChange={(event) =>
-                table.getColumn("status")?.setFilterValue(event)
+                table.getColumn("statusPagamento")?.setFilterValue(event)
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Pendente" />
+                <SelectValue placeholder="Sem filtro" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="CONCLUIDO">Concluído</SelectItem>
-                <SelectItem value="PREPARANDO">Preparando</SelectItem>
+                <SelectItem value="EFETUADO">Efetuado</SelectItem>
               </SelectContent>
             </Select>
           </div>

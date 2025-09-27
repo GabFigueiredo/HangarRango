@@ -5,11 +5,9 @@ import {
   IconInnerShadowTop,
 } from "@tabler/icons-react"
 
-import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -17,13 +15,9 @@ import {
 } from "@/components/ui/sidebar"
 import { NavDocuments } from "./nav-documents"
 import { Pizza, ShoppingBag, Users } from "lucide-react"
+import Link from "next/link"
 
 const data = {
-  user: {
-    name: "Roberta",
-    email: "roberta@igrejacristahangar.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   client: [
     {
       name: "Pedir",
@@ -53,10 +47,10 @@ export function ClientSidebar({ ...props }: React.ComponentProps<typeof Sidebar>
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
+              <Link href="/">
                 <IconInnerShadowTop className="!size-5" />
                 <span className="text-base font-semibold">Hangar Rango</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -64,9 +58,6 @@ export function ClientSidebar({ ...props }: React.ComponentProps<typeof Sidebar>
       <SidebarContent>
         <NavDocuments items={data.client}/>
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
     </Sidebar>
   )
 }

@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useMutation } from "@tanstack/react-query"
 import { logIn } from "@/service/user/login"
-import { LogInResponse, LoginUser } from "@/types/user/User"
+import { LogInResponse, LogInUser } from "@/types/user/User"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { useUser } from "@/context/UserContext"
@@ -26,10 +26,10 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"form">) 
 {
-  const { changeToken } = useUser()
+  const { changeToken, changeUser } = useUser()
   const router = useRouter();
 
-  const { mutate, isPending } = useMutation<LogInResponse, Error, LoginUser>({
+  const { mutate, isPending } = useMutation<LogInResponse, Error, LogInUser>({
     mutationFn: logIn,
     onSuccess: (response) => saveUserToken(response),
     onError: () => toast.error("Email ou senha incorretos.")
@@ -54,6 +54,9 @@ export function LoginForm({
 
     // Salva no contexto
     changeToken(LogInResponse.token);
+
+    console.log()
+    changeUser(LogInResponse.usuario)
     router.push("/admin")
   }
   

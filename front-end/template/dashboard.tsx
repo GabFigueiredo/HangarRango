@@ -1,4 +1,3 @@
-import { SectionCards } from "@/components/section-cards"
 import { SiteHeader } from "@/components/site-header"
 import { OrderColumns } from "@/components/table/order/columns"
 import OrderFilterFields from "@/components/table/order/order-filter-fields"
@@ -34,25 +33,25 @@ export default function DashboardPage() {
         <>
         <SidebarInset className="h-full">
             <SiteHeader name="Financeiro" />
-            <div className="flex flex-1 flex-col">
-            <div className="@container/main flex flex-1 flex-col gap-2">
-                {/* <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                    <SectionCards />
-                </div> */}
-                <div className="px-4 lg:px-6">
-                    {isLoading ?
-                        <div className="flex flex-wrap gap-5 p-5">
-                            {Array.from({length: 8}).map((_, i) => (
-                                <Skeleton key={i} className="w-full h-20" />
-                            ))}
-                        </div>
-                    : isError ?
-                        <p>Não foi possível buscar os pedidos</p>
-                    :
-                        <DataTable columns={OrderColumns} data={response?.data ?? []} FilterFields={OrderFilterFields} />
-                    }
+            <div className="flex flex-1 flex-col font-inter">
+                <div className="@container/main flex flex-1 flex-col gap-2">
+                    {/* <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                        <SectionCards />
+                    </div> */}
+                    <div className="px-4 lg:px-6">
+                        {isLoading ?
+                            <div className="flex flex-wrap gap-5 p-5">
+                                {Array.from({length: 8}).map((_, i) => (
+                                    <Skeleton key={i} className="w-full h-20" />
+                                ))}
+                            </div>
+                        : isError ?
+                            <p>Não foi possível buscar os pedidos</p>
+                        :
+                            <DataTable columns={OrderColumns} data={response?.data ?? []} FilterFields={OrderFilterFields} />
+                        }
+                    </div>
                 </div>
-            </div>
             </div>
         </SidebarInset>
         </>

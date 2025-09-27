@@ -36,7 +36,7 @@ export default function ProdutosPage() {
   return (
     <SidebarInset className="h-full">
       <SiteHeader name="Gerenciamento de produtos" />
-      <div className="px-4 lg:px-6 mt-4">
+      <div className="font-inter px-4 lg:px-6 mt-4">
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button variant={"default"} className="w-min hover:cursor-pointer">

@@ -23,7 +23,7 @@ export default function PreparacaoPage() {
     return (
     <SidebarInset className="h-screen">
         <SiteHeader name="Área de preparação"/>
-        <div className="@container/main flex flex-1 flex-col gap-2 p-5">
+        <div className="@container/main font-inter flex flex-1 flex-col gap-2 p-5">
             <div className="">
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {response?.map((pedido) => (

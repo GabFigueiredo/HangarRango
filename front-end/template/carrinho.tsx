@@ -1,6 +1,5 @@
 "use client";
 
-import AlertPayment from "@/components/alert-payment";
 import CartItem from "@/components/cart-item";
 import PaymentForm from "@/components/payment-form";
 import { SiteHeader } from "@/components/site-header";
@@ -15,15 +14,12 @@ import { useState } from "react";
 export default function CarrinhoPage() {
   const { orders, total } = useCart();
   const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false);
-  const [isAlertPaymentOpen, setIsAlertPaymentOpen] = useState(false);
-  const [paymentOption, setPaymentOption] = useState<"PAGAMENTO_MANUAL" | "PIX">("PAGAMENTO_MANUAL");
-  const [pixCopiaECola, setPixCopiaECola] = useState("");
 
   return (
     <SidebarInset className="h-full">
       <SiteHeader name="Carrinho" />
       {orders.length >= 1 ? (
-        <>
+        <div className="font-inter">
           <div className="p-4 flex mx-auto flex-col w-full gap-5 items-center justify-center max-w-[400px]">
             {orders.map((order) => {
               return <CartItem key={order.id} produto={order} />;
@@ -45,25 +41,13 @@ export default function CarrinhoPage() {
               <DialogContent>
                 <PaymentForm
                   setIsPaymentFormOpen={setIsPaymentFormOpen}
-                  setIsAlertPaymentOpen={setIsAlertPaymentOpen}
-                  setPixCopiaECola={setPixCopiaECola}
-                  setPaymentOption={setPaymentOption}
                 />
               </DialogContent>
             </Dialog>
-            <Dialog
-              open={isAlertPaymentOpen}
-              onOpenChange={setIsAlertPaymentOpen}
-            >
-              <AlertPayment
-                type={paymentOption}
-                pixCopiaECola={pixCopiaECola}
-              />
-            </Dialog>
           </div>
-        </>
+        </div>
       ) : (
-        <div className="flex flex-col w-full justify-center items-center gap-3 mt-5">
+        <div className="flex flex-col w-full font-inter justify-center items-center gap-3 mt-5">
           <h1 className="text-4xl font-bold">Ops..</h1>
           <p>Você não colocou nenhum item no carrinho.</p>
           <Link href={"/cantina"}>

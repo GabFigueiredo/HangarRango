@@ -8,7 +8,7 @@ import { PixQrCodeResponse } from "../abacate/abacate";
 
 export interface PedidoResponse {
   id: string;
-  clienteNome: string;
+  cliente: Cliente;
   preco: number;
   status: PedidoStatus;
   statusPagamento: StatusPagamento;

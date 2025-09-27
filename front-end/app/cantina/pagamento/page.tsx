@@ -1,3 +1,5 @@
+import Pagamento from "@/template/pagamento";
+
 export default function Page() {
-    return <h1>hello</h1>
+    return <Pagamento />
 }

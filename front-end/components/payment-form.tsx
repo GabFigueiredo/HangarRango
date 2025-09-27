@@ -35,9 +35,6 @@ import { toast } from "sonner";
 
 interface PaymentFormProps {
   setIsPaymentFormOpen: (open: boolean) => void;
-  setIsAlertPaymentOpen: (open: boolean) => void;
-  setPixCopiaECola: (pix: string) => void;
-  setPaymentOption: (option: "PAGAMENTO_MANUAL" | "PIX") => void;
 }
 
 const formSchema = z.object({
@@ -62,25 +59,21 @@ export default function PaymentForm(modal: PaymentFormProps) {
   const { mutate } = useMutation({
     mutationFn: (data: PedidoRequest) => CreateOrder(data),
     onSuccess: (data: PedidoResponse) => {
-      toast.success("Seu pedido foi efetuado.");
-
       switch (data.formaPagamento) {
         case "PIX":
-          modal.setPaymentOption("PIX");
-          modal.setPixCopiaECola(data.abacateResponse.data?.brCode || "");
+          router.push(`/cantina/pagamento?type=PIX&pixCopiaECola=${data.abacateResponse.data?.brCode}`);
           break;
         case "CARTAO":
         case "DINHEIRO":
-          modal.setPaymentOption("PAGAMENTO_MANUAL");
-          modal.setPixCopiaECola("");
+          router.push("/cantina/pagamento?type=PAGAMENTO_MANUAL");
           break;
         case "MARCADO":
           router.push("/cantina/meus-pedidos");
-          clearCart();
+          toast.success("Seu pedido foi efetuado com sucesso!")
           break;
       }
-      console.log("BATE AQUI");
-      modal.setIsAlertPaymentOpen(true);
+      clearCart();
+      addCompletedOrder(data)
       modal.setIsPaymentFormOpen(false);
     },
     onError: (error) => console.log(error),

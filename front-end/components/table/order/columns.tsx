@@ -9,8 +9,13 @@ import { ChangePaymentStatus } from "@/service/orders/change-payment-status";
 import { StatusPagamento } from "@/enums/order/statusPagamento.enum";
 export const OrderColumns: ColumnDef<PedidoResponse>[] = [
   {
-    accessorKey: "clienteNome",
+    accessorKey: "numeroPedido",
+    header: "Cod.",
+  },
+  {
+    accessorKey: "cliente.name",
     header: "Nome do cliente",
+    id: "cliente.name"
   },
   {
     accessorKey: "status",
