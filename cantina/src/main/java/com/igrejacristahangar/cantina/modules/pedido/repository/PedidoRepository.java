@@ -3,6 +3,7 @@ package com.igrejacristahangar.cantina.modules.pedido.repository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.igrejacristahangar.cantina.modules.pedido.enums.STATUS;
@@ -27,4 +28,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, UUID>, JpaSpecif
                                                     @Param("endOfDay") LocalDateTime endOfDay);
 
     List<Pedido> findAllByStatus(STATUS status);
+
+    @Query("SELECT p FROM Pedido p ORDER BY p.createdAt DESC")
+    Optional<List<Pedido>> findAllOrderedByDate();
 }

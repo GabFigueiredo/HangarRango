@@ -10,6 +10,10 @@ import com.igrejacristahangar.cantina.modules.pedido.mapper.PedidoMapper;
 import com.igrejacristahangar.cantina.modules.pedido.model.Pedido;
 import com.igrejacristahangar.cantina.modules.pedido.repository.PedidoRepository;
 import com.igrejacristahangar.cantina.modules.pedido.service.PedidoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -23,6 +27,7 @@ import java.util.Objects;
 @Controller
 @RestController
 @RequestMapping("/abacate/webhook")
+@Tag(name = "AbacatePay", description = "Rotas para o checkout de pagamento.")
 public class AbacateController {
 
     @Autowired
@@ -40,6 +45,12 @@ public class AbacateController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
+    @Operation(summary = "Webhook AbacatePay", description = "Rota responsável por receber o webhook da abacatepay", method = "POST")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Webhook recebido com sucesso.")
+            }
+    )
     @PostMapping
     public ResponseEntity<Void> WebHookAbacatePay(@RequestBody PixQrCodeResponseDTO payload) {
         Pedido pedido = pedidoService.buscarPedidoPorID(payload.getData().getMetadata().getExternalId());
@@ -47,15 +58,15 @@ public class AbacateController {
         if (Objects.equals(payload.getData().getStatus(), "PAID")) {
             pedido.setStatusPagamento(STATUS_PAGAMENTO.EFETUADO);
             pedido.setStatus(STATUS.PREPARANDO);
+
+            // Mapeia para DTO de resposta
+            PedidoResponseDTO pedidoMapeado = pedidoMapper.PedidoToPedidoResponseDTO(pedido);
+            pedidoMapeado.setAbacateResponse(payload);
+
+            messagingTemplate.convertAndSend("/cantina/preparacao", pedidoMapeado);
+
+            pedidoRepository.save(pedido);
         }
-
-        // Mapeia para DTO de resposta
-        PedidoResponseDTO pedidoMapeado = pedidoMapper.PedidoToPedidoResponseDTO(pedido);
-        pedidoMapeado.setAbacateResponse(payload);
-
-        messagingTemplate.convertAndSend("/cantina/preparacao", pedidoMapeado);
-
-        pedidoRepository.save(pedido);
 
         return ResponseEntity.ok().build();
     }

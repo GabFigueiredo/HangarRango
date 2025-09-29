@@ -38,6 +38,14 @@ public class ProdutoController {
     })
     @GetMapping("/produtos-disponiveis")
     public ResponseEntity<List<ProdutoResponseDTO>> findAllAvailableProducts() {
-        return ResponseEntity.ok(produtoService.buscarTodosProdutosDisponiveis());
+        List<ProdutoResponseDTO> pl = produtoService.buscarTodosProdutosDisponiveis();
+
+        pl.forEach(produtoResponseDTO -> {
+            System.out.println(produtoResponseDTO.getNome());
+        });
+
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+        return ResponseEntity.ok(pl);
     }
 }

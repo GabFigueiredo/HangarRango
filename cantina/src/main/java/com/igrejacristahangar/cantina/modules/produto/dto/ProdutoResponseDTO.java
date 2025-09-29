@@ -10,7 +10,7 @@ public class ProdutoResponseDTO {
     private UUID id;
     private String nome;
     private BigDecimal preco;
+    private Boolean status;
     private String descricao;
     private Integer quantidade;
-    private boolean status;
 }

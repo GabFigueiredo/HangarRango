@@ -73,12 +73,13 @@ public class PedidoService {
     }
 
     /**
-     * Busca todos os pedidos.
+     * Busca todos os pedidos ordenados por data.
      *
      * @return List<PedidoResponseDTO> com PedidoResponseDTO
      */
     public List<PedidoResponseDTO> buscarTodosOsPedidos() {
-        return pedidoMapper.PedidoListToPedidoResponseDTOList(pedidoRepository.findAll());
+        return pedidoMapper.PedidoListToPedidoResponseDTOList(pedidoRepository.findAllOrderedByDate()
+                .orElseThrow( () -> new ResourceNotFoundException("Pedidos não encontados", "id")));
     }
 
     public List<PedidoResponseDTO> buscarTodosPedidosPreparando() {
@@ -176,7 +177,9 @@ public class PedidoService {
         pedidoMapeado.setAbacateResponse(abacateResponse);
 
         // Envia notificação via WebSocket
-        if (pedidoSalvo.getStatusPagamento().equals(STATUS_PAGAMENTO.PENDENTE)) {
+        System.out.println(pedidoSalvo.getFormaPagamento());
+        System.out.println(pedidoSalvo.getFormaPagamento().equals(FORMA_PAGAMENTO.MARCADO));
+        if (pedidoSalvo.getFormaPagamento().equals(FORMA_PAGAMENTO.MARCADO)) {
             messagingTemplate.convertAndSend("/cantina/preparacao", pedidoMapeado);
         }
 
