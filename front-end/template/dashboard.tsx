@@ -1,3 +1,5 @@
+'use client'
+
 import { SiteHeader } from "@/components/site-header"
 import { OrderColumns } from "@/components/table/order/columns"
 import OrderFilterFields from "@/components/table/order/order-filter-fields"
@@ -9,25 +11,16 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { getAllOrders } from "@/service/orders/get-all-orders"
 import { useQuery } from "@tanstack/react-query"
 import React from "react"
-import { toast } from "sonner"
-
 
 export default function DashboardPage() {
-    const { data: response, isLoading, isError, isSuccess } = useQuery({
+    const { data: response, isLoading, isError } = useQuery({
         queryKey: ["orders"],
-        queryFn: () => getAllOrders(),
+        queryFn: getAllOrders,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
-        refetchInterval: false,
-        staleTime: Infinity,
+        refetchInterval: 1800000,
+        staleTime: Infinity, 
     });
-
-    if (isError) {
-        toast.error("Não foi possível carregar os dados.", { id: "orders-toast" });
-    }
-    if (isSuccess) {
-        toast.success("Dados carregados com sucesso.", { id: "orders-toast" });
-    }
 
     return (
         <>
@@ -48,7 +41,7 @@ export default function DashboardPage() {
                         : isError ?
                             <p>Não foi possível buscar os pedidos</p>
                         :
-                            <DataTable columns={OrderColumns} data={response?.data ?? []} FilterFields={OrderFilterFields} />
+                            <DataTable columns={OrderColumns} data={response ?? []} FilterFields={OrderFilterFields} />
                         }
                     </div>
                 </div>

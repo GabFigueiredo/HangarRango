@@ -1,3 +1,5 @@
+'use client'
+
 import { Label } from "@/components/ui/label";
 import { PedidoResponse } from "@/types/order/Pedido";
 import { Input } from "@/components/ui/input";
@@ -33,13 +35,14 @@ export default function OrderFilterFields({ table }: OrderFilterFieldsProps) {
                 ""
               }
               onValueChange={(event) =>
-                table.getColumn("status")?.setFilterValue(event)
+                table.getColumn("status")?.setFilterValue(event === "ALL" ? "" : event)
               }
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Sem filtro" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="ALL">Sem filtro</SelectItem>
                 <SelectItem value="PREPARANDO">Preparando</SelectItem>
                 <SelectItem value="CONCLUIDO">Concluído</SelectItem>
               </SelectContent>
@@ -53,13 +56,14 @@ export default function OrderFilterFields({ table }: OrderFilterFieldsProps) {
                 ""
               }
               onValueChange={(event) =>
-                table.getColumn("formaPagamento")?.setFilterValue(event)
+                table.getColumn("formaPagamento")?.setFilterValue(event === "ALL" ? "" : event)
               }
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Sem filtro" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="ALL">Sem filtro</SelectItem>
                 <SelectItem value="PIX">Pix</SelectItem>
                 <SelectItem value="CARTAO">Cartão</SelectItem>
                 <SelectItem value="DINHEIRO">Dinheiro</SelectItem>
@@ -74,13 +78,14 @@ export default function OrderFilterFields({ table }: OrderFilterFieldsProps) {
                 (table.getColumn("statusPagamento")?.getFilterValue() as string) ?? ""
               }
               onValueChange={(event) =>
-                table.getColumn("statusPagamento")?.setFilterValue(event)
+                table.getColumn("statusPagamento")?.setFilterValue(event === "ALL" ? "" : event)
               }
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Sem filtro" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="ALL">Sem filtro</SelectItem>
                 <SelectItem value="EFETUADO">Efetuado</SelectItem>
               </SelectContent>
             </Select>

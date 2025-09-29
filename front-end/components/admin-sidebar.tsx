@@ -19,7 +19,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { useUser } from "@/context/UserContext"
 import Link from "next/link"
 
 const data = {
@@ -44,8 +43,6 @@ const data = {
 }
 
 export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useUser()
-
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -67,7 +64,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user}/>
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )

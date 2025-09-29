@@ -9,13 +9,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { User } from "@/types/user/User";
 
-interface NavUserProps {
-  user: User | null;
-}
+export function NavUser() {
 
-export function NavUser({ user }: NavUserProps) {
+  const user = {
+    name: localStorage.getItem("USER_NAME"),
+    email: localStorage.getItem("USER_EMAIL")
+  }
 
   return (
     <SidebarMenu>
@@ -29,9 +29,9 @@ export function NavUser({ user }: NavUserProps) {
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user?.nome}</span>
+                <span className="truncate font-medium">{user.name}</span>
                 <span className="text-muted-foreground truncate text-xs">
-                  {user?.email}
+                  {user.email}
                 </span>
               </div>
             </SidebarMenuButton>

@@ -1,3 +1,5 @@
+'use client'
+
 import { CardDescription } from "./ui/card";
 import { Button } from "./ui/button";
 import { CircleCheck } from "lucide-react";
@@ -43,7 +45,7 @@ export default function StageOrder({ Pedido }: StageOrderProps) {
                 <CardDescription className="flex text-foreground gap-1 items-center">
                     <p className="text-3xl font-semibold ">{Pedido.numeroPedido.toString().padStart(3, "0")}</p>
                     <Separator />
-                    <p className="text-sm text-primary w-min">{Pedido.clienteNome}</p>
+                    <p className="text-sm text-primary w-min">{Pedido.cliente.name}</p>
                 </CardDescription>
                 <Button onClick={handleOrderConcludes} variant={"outline"}>
                     <CircleCheck />

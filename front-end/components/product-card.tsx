@@ -8,7 +8,6 @@ import { Button } from "./ui/button";
 import React from "react";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
-import { useRouter } from "next/router";
 
 interface ProductCardProps {
     produto: ProdutoType

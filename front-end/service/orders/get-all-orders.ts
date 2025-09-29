@@ -6,5 +6,5 @@ export async function getAllOrders() {
 
   const { data, status } = await privateApi.get<PedidoResponse[]>(url);
 
-  return { data, status };
+  return data;
 }
