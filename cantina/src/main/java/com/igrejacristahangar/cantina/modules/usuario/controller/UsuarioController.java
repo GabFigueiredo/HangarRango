@@ -10,6 +10,8 @@ import com.igrejacristahangar.cantina.modules.usuario.repository.UsuarioReposito
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,8 +49,14 @@ public class UsuarioController {
 
         TokenResponseDTO responseDTO = new TokenResponseDTO(usuarioResponse, token);
 
-        return ResponseEntity.ok(responseDTO);
+        ResponseCookie cookie = ResponseCookie.from("USER_TOKEN", token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("Strict")
+                .build();
 
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(responseDTO);
     }
 
     @PostMapping("/register")
