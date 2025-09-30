@@ -8,11 +8,10 @@ import { getAllPreparingOrders } from "@/service/orders/get-all-preparing-orders
 import { useQuery } from "@tanstack/react-query";
 
 export default function PreparacaoPage() {
-    const token = localStorage.getItem("USER_TOKEN")
 
     const { data: response } = useQuery({
       queryKey: ["pedidos-pendentes"],
-      queryFn: () => getAllPreparingOrders(token ?? ""),
+      queryFn: getAllPreparingOrders,
       refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchInterval: false,
