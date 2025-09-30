@@ -1,11 +1,5 @@
-FROM maven:3.9.3-eclipse-temurin-23 AS build
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean package -DskipTests
-
-FROM eclipse-temurin:23-jdk-alpine
-WORKDIR /app
-COPY --from=build /app/target/cantina-0.0.1-SNAPSHOT.jar app.jar
+FROM openjdk:23-jdk-alpine
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ARG JAR_FILE=target/cantina-0.0.1-SNAPSHOT.jar
+ADD ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
