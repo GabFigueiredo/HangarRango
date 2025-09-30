@@ -1,3 +1,5 @@
+'use client'
+
 import { IconCircleCheckFilled, IconLoader } from "@tabler/icons-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "../../ui/badge";
@@ -13,6 +15,7 @@ import { ProdutoType } from "@/types/Produto";
 import { ChangeProductStatus } from "@/service/product/change-product-status";
 
 export const ProductColumns: ColumnDef<ProdutoType>[] = [
+
   {
     accessorKey: "nome",
     header: "Nome",

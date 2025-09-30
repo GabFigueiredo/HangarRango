@@ -13,9 +13,11 @@ import { useQuery } from "@tanstack/react-query"
 import React from "react"
 
 export default function DashboardPage() {
+    const token = localStorage.getItem("USER_TOKEN")
+
     const { data: response, isLoading, isError } = useQuery({
         queryKey: ["orders"],
-        queryFn: getAllOrders,
+        queryFn: () => getAllOrders(token ?? ""),
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
         refetchInterval: 1800000,

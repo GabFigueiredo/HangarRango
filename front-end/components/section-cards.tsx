@@ -11,7 +11,7 @@ import { getSummary } from "@/service/orders/get-summary"
 import { useQuery } from "@tanstack/react-query"
 
 export function SectionCards() {
-  const { isPending, isError, data, error } = useQuery({
+  const { data } = useQuery({
     queryKey: ['summary'],
     queryFn: getSummary
   }) 

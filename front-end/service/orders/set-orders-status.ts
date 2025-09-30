@@ -1,4 +1,4 @@
-import { privateApi } from "@/api/privateApi";
+import api from "@/api/axios";
 import { PedidoStatus } from "@/enums/order/pedidoStatus.enum";
 import { PedidoResponse } from "@/types/order/Pedido";
 
@@ -10,7 +10,7 @@ interface setOrderStatusProps {
 export async function setOrderStatus(status: setOrderStatusProps) {
   const url = "/admin/pedido/status";
 
-  const resumo = await privateApi.patch<PedidoResponse>(url, status);
+  const resumo = await api.patch<PedidoResponse>(url, status);
 
   return resumo;
 }

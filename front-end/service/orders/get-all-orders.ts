@@ -1,10 +1,10 @@
-import { privateApi } from "@/api/privateApi";
+import api from "@/api/axios";
 import { PedidoResponse } from "@/types/order/Pedido";
 
 export async function getAllOrders() {
   const url = "/admin/pedido";
 
-  const { data, status } = await privateApi.get<PedidoResponse[]>(url);
+  const { data } = await api.get<PedidoResponse[]>(url);
 
   return data;
 }
