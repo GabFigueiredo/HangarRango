@@ -60,10 +60,9 @@ export default function CreateProductDialog({setOpen}: CreateProductDialog) {
   });
 
   const queryClient = useQueryClient();
-  const token = localStorage.getItem("USER_TOKEN");
 
   const { mutate } = useMutation<ProdutoType, Error, ProdutoType>({
-    mutationFn: (data) => CreateProduct(data, token ?? ''),
+    mutationFn: (data) => CreateProduct(data),
     onSuccess: (newProduct) => {
       queryClient.setQueryData<ProdutoType[]>(["produtos"], (oldData) => {
           return oldData?.map((produto) =>

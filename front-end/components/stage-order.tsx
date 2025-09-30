@@ -16,13 +16,12 @@ interface StageOrderProps {
 
 export default function StageOrder({ Pedido }: StageOrderProps) {
     const queryClient = useQueryClient();
-    const token = localStorage.getItem("USER_TOKEN");
     
     const { mutate } = useMutation({
         mutationFn: () => setOrderStatus({
             clientId: Pedido.id,
             pedidoStatus: PedidoStatus.CONCLUIDO
-        }, token ?? ""),
+        }),
         onSuccess: () => {
             // Atualiza o cache removendo o pedido concluído
             queryClient.setQueryData<PreparacaoResponse[]>(["pedidos-pendentes"], (oldData: PreparacaoResponse[] | undefined) => {
