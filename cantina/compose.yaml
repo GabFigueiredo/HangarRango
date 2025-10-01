@@ -1,8 +1,9 @@
 services:
+
   postgres:
     image: "postgres:latest"
     environment:
-      POSTGRES_DB: Cantina
+      POSTGRES_DB: cantina
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin123
     ports:
@@ -16,6 +17,8 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
+    env_file:
+      - .env
 
 volumes:
   postgres-data:
