@@ -62,7 +62,7 @@ export default function CreateProductDialog({setOpen}: CreateProductDialog) {
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation<ProdutoType, Error, ProdutoType>({
-    mutationFn: CreateProduct,
+    mutationFn: (data) => CreateProduct(data),
     onSuccess: (newProduct) => {
       queryClient.setQueryData<ProdutoType[]>(["produtos"], (oldData) => {
           return oldData?.map((produto) =>

@@ -1,20 +1,12 @@
-# Stage 1: Build
-FROM maven:3.9.2-eclipse-temurin-23 AS build
-
+# Build stage
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
-
 COPY pom.xml .
 COPY src ./src
-
 RUN mvn clean package -DskipTests
 
-# Stage 2: Runtime
-FROM eclipse-temurin:23-jdk-alpine
-
+# Run stage
+FROM openjdk:17-jdk-slim
 WORKDIR /app
-
-COPY --from=build /app/target/cantina-0.0.1-SNAPSHOT.jar app.jar
-
-EXPOSE 8080
-
+COPY --from=build /app/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]

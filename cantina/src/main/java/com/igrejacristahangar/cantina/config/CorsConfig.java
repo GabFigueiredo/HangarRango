@@ -20,11 +20,11 @@ public class CorsConfig {
 
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // todos os endpoints
-                        .allowedOrigins(frontendUrl) // frontend React
+                registry.addMapping("/**")
+                        .allowedOrigins(frontendUrl)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                         .allowedHeaders("*")
-                        .allowCredentials(true); // se for necessário cookies/autenticação
+                        .allowCredentials(true);
             }
         };
     }

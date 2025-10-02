@@ -49,11 +49,6 @@ export function LoginForm({
   }
 
   function saveUserToken(LogInResponse: LogInResponse) {
-    // Salva no localStorage
-    localStorage.setItem("USER_TOKEN", LogInResponse.token);
-    localStorage.setItem("USER_NAME", LogInResponse.usuario.nome)
-    localStorage.setItem("USER_EMAIL", LogInResponse.usuario.email)
-
     // Salva no contexto
     changeToken(LogInResponse.token);
 
