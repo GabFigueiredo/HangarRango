@@ -1,8 +1,8 @@
 package com.igrejacristahangar.cantina.modules.produto_pedido.dto;
 
 
-import com.igrejacristahangar.cantina.modules.pedido.model.Pedido;
-import com.igrejacristahangar.cantina.modules.produto.model.Produto;
+import com.igrejacristahangar.cantina.enterprise.order.Pedido;
+import com.igrejacristahangar.cantina.enterprise.product.Product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class ProdutoPedidoRequestDTO {
     private Pedido pedido;
 
-    private Produto produto;
+    private Product produto;
 
     private Integer quantidade;
 

@@ -1,6 +1,6 @@
 package com.igrejacristahangar.cantina.config.security;
 
-import com.igrejacristahangar.cantina.modules.usuario.repository.UsuarioRepository;
+import com.igrejacristahangar.cantina.enterprise.repositories.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
